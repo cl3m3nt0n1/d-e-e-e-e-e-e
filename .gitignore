@@ -16,6 +16,7 @@ Builds/*
 
 # This should never exist
 Install/*
+build/
 
 # Running CTest makes a bunch o junk
 Testing

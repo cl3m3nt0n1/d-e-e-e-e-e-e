@@ -2,6 +2,9 @@
 # 3.24.1 is also bundled in CLion as of 2023
 cmake_minimum_required(VERSION 3.24.1)
 
+set(PROJECT_VERSION_MAJOR 0)
+set(PROJECT_VERSION_MINOR 1)
+
 
 # This tells cmake we have goodies in the /cmake folder
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -25,7 +28,7 @@ set(PROJECT_NAME "Deeeeee")
 #   set(PROJECT_NAME "MyPlugin_v${MAJOR_VERSION}")
 # Doing so enables major versions to show up in IDEs and DAWs as separate plugins
 # allowing you to change parameters and behavior without breaking existing user projects
-set(PRODUCT_NAME "Deeeeee v0.0.1")
+set(PRODUCT_NAME "Deeeeee v${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
 # Change me! Used for the MacOS bundle name and Installers
 set(COMPANY_NAME "Canyon Team")
