@@ -63,6 +63,7 @@ public:
         if (index > lastIndex) // superior case
         {
             buffer.setSample (channel, totalSize - index, value);
+            buffer[1] = 0;
         }
         else if (index < 0) // inferior case 
         {
@@ -72,6 +73,38 @@ public:
         {
          buffer.setSample(channel, index, value);
         }
+    }
+
+    /**
+     * @brief A call to juce::AudioBuffer::getNumChannels()
+     */
+    int getNumChannels()
+    {
+        return buffer.getNumChannels();
+    }
+
+    /**
+     * @brief A call to juce::AudioBuffer::getNumSamples()
+     */
+    int getNumSamples()
+    {
+        buffer.getNumSamples();
+    }
+
+    /**
+     * @brief A call to juce::AudioBuffer::copyFrom()
+     */
+    void copyFrom(int destChannel, int destStartSample, const juce::AudioBuffer<T>& bufferToCopyFrom, int sourceChannel, int sourceStartSample, int numSamples)
+    {
+        buffer.copyFrom(destChannel, destStartSample, bufferToCopyFrom, sourceChannel, sourceStartSample, numSamples);
+    }
+
+    /**
+     * @brief A call to juce::AudioBuffer::getSample()
+     */
+    T getSample(int channel, int index)
+    {
+        buffer.getSample(channel, index);
     }
 
 private:
