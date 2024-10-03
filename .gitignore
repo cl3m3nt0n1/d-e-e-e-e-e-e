@@ -23,6 +23,9 @@ Testing
 
 # IDE config
 .idea
+.vscode
+.code
+.cache
 
 # clion cmake builds
 cmake-build-*
