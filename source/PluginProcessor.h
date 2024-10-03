@@ -3,7 +3,6 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "Delay/Delay.h"
 #include "CircularBuffer/CircularBuffer.h"
-#include "CircularBufferFloat/CircularBufferFloat.h"
 
 #if (MSVC)
 #include "ipps.h"
@@ -45,11 +44,10 @@ private:
 
     /*======================== FUNCTIONS ===========================*/
     juce::AudioProcessorValueTreeState::ParameterLayout CreateParameterLayout();
+
     /*======================== MEMBERS ===========================*/
     juce::AudioProcessorValueTreeState apvts{*this, nullptr, "Parameters", CreateParameterLayout()};
     Delay delay;
-
-    // CircularBufferFloat circularBuffer {2, 5};
 
     CircularBuffer<float> circularBuffer {2, 5};
 

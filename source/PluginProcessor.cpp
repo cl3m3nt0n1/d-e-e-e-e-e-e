@@ -92,10 +92,10 @@ void PluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     circularBuffer.SetSameValueAtIndexForEveryChannel(5,  2); // normal case
     circularBuffer.PrintBuffer();
     
-    circularBuffer.SetSameValueAtIndexForEveryChannel(5,  5); // normal case
+    circularBuffer.SetSameValueAtIndexForEveryChannel(5,  5); // out of bounds (by excess) case
     circularBuffer.PrintBuffer();
     
-    circularBuffer.SetSameValueAtIndexForEveryChannel(5,  -1); // normal case
+    circularBuffer.SetSameValueAtIndexForEveryChannel(5,  -1); // out of bounds (negative) case
     circularBuffer.PrintBuffer();
 
 }
