@@ -10,7 +10,8 @@ PluginProcessor::PluginProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+      delay(apvts)
 {
 }
 
@@ -86,9 +87,17 @@ void PluginProcessor::changeProgramName (int index, const juce::String& newName)
 //==============================================================================
 void PluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
-    juce::ignoreUnused (sampleRate, samplesPerBlock);
+    delay.PrepareToPlay (sampleRate, samplesPerBlock);
+
+    circularBuffer.SetSameValueAtIndexForEveryChannel(5,  2); // normal case
+    circularBuffer.PrintBuffer();
+    
+    circularBuffer.SetSameValueAtIndexForEveryChannel(5,  5); // normal case
+    circularBuffer.PrintBuffer();
+    
+    circularBuffer.SetSameValueAtIndexForEveryChannel(5,  -1); // normal case
+    circularBuffer.PrintBuffer();
+
 }
 
 void PluginProcessor::releaseResources()
@@ -143,12 +152,24 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    
+    
+/*     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        auto* channelData = buffer.getWritePointer (channel);
-        juce::ignoreUnused (channelData);
-        // ..do something to the data...
+         delayBuffer.copyFrom (channel, 0, buffer, channel, 0, delayBuffer.getNumSamples());
+        for (int i = 1; i < delayBuffer.getNumSamples(); i++)
+        {
+            delayBuffer.setSample (channel, i, delayBuffer.getSample (channel, i - 1));
+        }
+
+        for (int i = 0; i < delayBuffer.getNumSamples(); i++)
+        {
+            buffer.setSample (channel, i, delayBuffer.getSample (channel, i));
+        } 
+
     }
+ */
+    
 }
 
 //==============================================================================
@@ -159,8 +180,10 @@ bool PluginProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* PluginProcessor::createEditor()
 {
-    return new PluginEditor (*this);
+//    return new PluginEditor (*this);
+    return new juce::GenericAudioProcessorEditor(*this);
 }
+
 
 //==============================================================================
 void PluginProcessor::getStateInformation (juce::MemoryBlock& destData)
@@ -176,6 +199,14 @@ void PluginProcessor::setStateInformation (const void* data, int sizeInBytes)
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
     juce::ignoreUnused (data, sizeInBytes);
+}
+juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::CreateParameterLayout()
+{
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+
+    delay.AppendToParameterLayout(layout);
+
+    return layout;
 }
 
 //==============================================================================

@@ -1,6 +1,9 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#include "Delay/Delay.h"
+#include "CircularBuffer/CircularBuffer.h"
+#include "CircularBufferFloat/CircularBufferFloat.h"
 
 #if (MSVC)
 #include "ipps.h"
@@ -39,5 +42,19 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+
+    /*======================== FUNCTIONS ===========================*/
+    juce::AudioProcessorValueTreeState::ParameterLayout CreateParameterLayout();
+    /*======================== MEMBERS ===========================*/
+    juce::AudioProcessorValueTreeState apvts{*this, nullptr, "Parameters", CreateParameterLayout()};
+    Delay delay;
+
+    // CircularBufferFloat circularBuffer {2, 5};
+
+    CircularBuffer<float> circularBuffer {2, 5};
+
+    juce::AudioBuffer<float> delayBuffer{2, 256};
+
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessor)
 };
