@@ -3,15 +3,15 @@
 
 //==============================================================================
 PluginProcessor::PluginProcessor()
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       ),
-      delay(apvts)
+    : AudioProcessor (BusesProperties()
+#if !JucePlugin_IsMidiEffect
+    #if !JucePlugin_IsSynth
+                          .withInput ("Input", juce::AudioChannelSet::stereo(), true)
+    #endif
+                          .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+#endif
+              ),
+      delay (apvts)
 {
 }
 
@@ -27,29 +27,29 @@ const juce::String PluginProcessor::getName() const
 
 bool PluginProcessor::acceptsMidi() const
 {
-   #if JucePlugin_WantsMidiInput
+#if JucePlugin_WantsMidiInput
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 bool PluginProcessor::producesMidi() const
 {
-   #if JucePlugin_ProducesMidiOutput
+#if JucePlugin_ProducesMidiOutput
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 bool PluginProcessor::isMidiEffect() const
 {
-   #if JucePlugin_IsMidiEffect
+#if JucePlugin_IsMidiEffect
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 double PluginProcessor::getTailLengthSeconds() const
@@ -59,8 +59,8 @@ double PluginProcessor::getTailLengthSeconds() const
 
 int PluginProcessor::getNumPrograms()
 {
-    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
-                // so this should be at least 1, even if you're not really implementing programs.
+    return 1; // NB: some hosts don't cope very well if you tell them there are 0 programs,
+        // so this should be at least 1, even if you're not really implementing programs.
 }
 
 int PluginProcessor::getCurrentProgram()
@@ -89,15 +89,14 @@ void PluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     delay.PrepareToPlay (sampleRate, samplesPerBlock);
 
-    circularBuffer.SetSameValueAtIndexForEveryChannel(5,  2); // normal case
-    circularBuffer.PrintBuffer();
-    
-    circularBuffer.SetSameValueAtIndexForEveryChannel(5,  5); // out of bounds (by excess) case
-    circularBuffer.PrintBuffer();
-    
-    circularBuffer.SetSameValueAtIndexForEveryChannel(5,  -1); // out of bounds (negative) case
+    circularBuffer.SetSameValueAtIndexForEveryChannel (5, 2); // normal case
     circularBuffer.PrintBuffer();
 
+    circularBuffer.SetSameValueAtIndexForEveryChannel (5, 5); // out of bounds (by excess) case
+    circularBuffer.PrintBuffer();
+
+    circularBuffer.SetSameValueAtIndexForEveryChannel (5, -1); // out of bounds (negative) case
+    circularBuffer.PrintBuffer();
 }
 
 void PluginProcessor::releaseResources()
@@ -108,33 +107,33 @@ void PluginProcessor::releaseResources()
 
 bool PluginProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
+#if JucePlugin_IsMidiEffect
     juce::ignoreUnused (layouts);
     return true;
-  #else
+#else
     // This is the place where you check if the layout is supported.
     // In this template code we only support mono or stereo.
     if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+        && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
 
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
+        // This checks if the input layout matches the output layout
+    #if !JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
-   #endif
+    #endif
 
     return true;
-  #endif
+#endif
 }
 
 void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
-                                              juce::MidiBuffer& midiMessages)
+    juce::MidiBuffer& midiMessages)
 {
     juce::ignoreUnused (midiMessages);
 
     juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
+    auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
     // In case we have more outputs than inputs, this code clears any output
@@ -152,9 +151,8 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    
-    
-/*     for (int channel = 0; channel < totalNumInputChannels; ++channel)
+
+    /*     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
          delayBuffer.copyFrom (channel, 0, buffer, channel, 0, delayBuffer.getNumSamples());
         for (int i = 1; i < delayBuffer.getNumSamples(); i++)
@@ -169,7 +167,6 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     }
  */
-    
 }
 
 //==============================================================================
@@ -180,10 +177,9 @@ bool PluginProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* PluginProcessor::createEditor()
 {
-//    return new PluginEditor (*this);
-    return new juce::GenericAudioProcessorEditor(*this);
+    //    return new PluginEditor (*this);
+    return new juce::GenericAudioProcessorEditor (*this);
 }
-
 
 //==============================================================================
 void PluginProcessor::getStateInformation (juce::MemoryBlock& destData)
@@ -204,7 +200,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::CreateParam
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
-    delay.AppendToParameterLayout(layout);
+    delay.AppendToParameterLayout (layout);
 
     return layout;
 }
