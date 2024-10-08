@@ -9,10 +9,9 @@ PluginProcessor::PluginProcessor()
     #endif
                           .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-              ) /* , delayLine(44100 * 2)*/
+        )
 {
-    /*     delayLine.setDelayTime(30000);
-    delayLine.setFeedbackGain(0.5); */
+
 }
 
 PluginProcessor::~PluginProcessor()
@@ -90,14 +89,15 @@ void PluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     juce::ignoreUnused (samplesPerBlock);
     juce::ignoreUnused (sampleRate);
     // delayLine.prepare(sampleRate);
-
+/* 
     // From AudioProgrammer tutorial
-    const int numInputChannels = getTotalNumInputChannels();
     mSampleRate = static_cast<int> (sampleRate);
     const int bufferSize = 2 * (mSampleRate + samplesPerBlock);
 
     mDelayBuffer.setSize (numInputChannels, bufferSize);
-    mDelayBuffer.clear();
+    mDelayBuffer.clear(); */
+
+    delay.prepare(getTotalNumInputChannels(), static_cast<int> (sampleRate), samplesPerBlock);
 }
 
 void PluginProcessor::releaseResources()
@@ -147,29 +147,33 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         buffer.clear (i, 0, buffer.getNumSamples());
 
     const auto bufferLength = buffer.getNumSamples();
-    const auto delayBufferLength = mDelayBuffer.getNumSamples();
+    const auto delayBufferLength = delay.getDelayBuffer().getNumSamples();
 
 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         const auto* bufferData = buffer.getReadPointer (channel);
-        const auto* delayBufferData = mDelayBuffer.getReadPointer (channel);
+        const auto* delayBufferData = delay.getDelayBuffer().getReadPointer (channel);
         auto dryBuffer = buffer.getWritePointer(channel);
-        // read the values from buffer and store them in delayBuffer.
+/*         // read the values from buffer and store them in delayBuffer.
         fillDelayBuffer (channel, bufferLength, delayBufferLength, bufferData);
 
         // read the values from the delayBuffer and write them to the audio buffer.
         getFromDelayBuffer (buffer, channel, bufferLength, delayBufferLength, delayBufferData);
 
-        feedbackDelay(channel, bufferLength, delayBufferLength, dryBuffer);
-        
+        feedbackDelay(channel, bufferLength, delayBufferLength, dryBuffer); */
+
+        delay.fillDelayBuffer(channel, bufferLength, delayBufferLength, bufferData);
+        delay.getFromDelayBuffer(buffer, channel, bufferLength, delayBufferLength, delayBufferData);
+        delay.feedbackDelay(channel, bufferLength, delayBufferLength, dryBuffer); 
+
     }
     /* We read bufferLength values so we need to increment the write position
      * so that, next time, we read once again bufferLength values but don't 
      * overwrite the previously saved values.
      */
-    mWritePosition += bufferLength;
-    mWritePosition %= delayBufferLength; // wrap around
+    delay.mWritePosition += bufferLength;
+    delay.mWritePosition %= delayBufferLength; // wrap around
 }
 
 //==============================================================================

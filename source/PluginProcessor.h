@@ -1,8 +1,6 @@
 #pragma once
 
-// #include "CircularBuffer/CircularBuffer.h"
-// #include "Delay/Delay.h"
-// #include "DDL/DDL.h"
+#include "Delay/Delay.hpp"
 #include "juce_audio_basics/juce_audio_basics.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 
@@ -54,16 +52,14 @@ private:
 
     /*======================== MEMBERS ===========================*/
     juce::AudioProcessorValueTreeState apvts { *this, nullptr, "Parameters", CreateParameterLayout() };
-    // DDL<float> delayLine;
-
-    // CircularBuffer<float> circularBuffer;
-
+    
     // From AudioProgrammer tutorial
     juce::AudioBuffer<float> mDelayBuffer;
     int mWritePosition = 0;
     int mSampleRate = 44100;
     int delayTime = 1000;
 
+    Delay delay;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessor)
 };
