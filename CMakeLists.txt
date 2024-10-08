@@ -28,7 +28,7 @@ set(PROJECT_NAME "Deeeeee")
 #   set(PROJECT_NAME "MyPlugin_v${MAJOR_VERSION}")
 # Doing so enables major versions to show up in IDEs and DAWs as separate plugins
 # allowing you to change parameters and behavior without breaking existing user projects
-set(PRODUCT_NAME "Deeeeee v${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
+set(PRODUCT_NAME "Deeeeee_v${PROJECT_VERSION_MAJOR}_${PROJECT_VERSION_MINOR}")
 
 # Change me! Used for the MacOS bundle name and Installers
 set(COMPANY_NAME "Canyon Team")
@@ -70,12 +70,12 @@ juce_add_plugin("${PROJECT_NAME}"
     # Change me!
     # A four-character plugin id
     # First character MUST be uppercase for AU formats
-    PLUGIN_MANUFACTURER_CODE Pamp
+    PLUGIN_MANUFACTURER_CODE Cany
 
     # Change me!
     # A unique four-character plugin id
     # Note: this must have at least one upper-case character
-    PLUGIN_CODE P001
+    PLUGIN_CODE P137
     FORMATS "${FORMATS}"
 
     # The name of your final executable
@@ -122,7 +122,7 @@ target_compile_definitions(SharedCode
     VERSION="${CURRENT_VERSION}"
 
     # JucePlugin_Name is for some reason doesn't use the nicer PRODUCT_NAME
-    PRODUCT_NAME_WITHOUT_VERSION="Pamplejuce"
+    PRODUCT_NAME_WITHOUT_VERSION="Deeeeee"
 )
 
 # Link to any other modules you added (with juce_add_module) here!

@@ -1,11 +1,13 @@
 #pragma once
 
+// #include "CircularBuffer/CircularBuffer.h"
+// #include "Delay/Delay.h"
+// #include "DDL/DDL.h"
+#include "juce_audio_basics/juce_audio_basics.h"
 #include <juce_audio_processors/juce_audio_processors.h>
-#include "Delay/Delay.h"
-#include "CircularBuffer/CircularBuffer.h"
 
 #if (MSVC)
-#include "ipps.h"
+    #include "ipps.h"
 #endif
 
 class PluginProcessor : public juce::AudioProcessor
@@ -40,18 +42,27 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-private:
+    // From AudioProgrammer tutorial
+    void fillDelayBuffer (int channel, const int bufferLength, const int delayBufferLength, const float* bufferData);
 
+    void getFromDelayBuffer (juce::AudioBuffer<float>& buffer, int channel, const int bufferLength, const int delayBufferLength, const float* delayBufferData);
+    void feedbackDelay (int channel, const int bufferLength, const int delayBufferLength, float* dryBuffer);
+
+private:
     /*======================== FUNCTIONS ===========================*/
     juce::AudioProcessorValueTreeState::ParameterLayout CreateParameterLayout();
 
     /*======================== MEMBERS ===========================*/
-    juce::AudioProcessorValueTreeState apvts{*this, nullptr, "Parameters", CreateParameterLayout()};
-    Delay delay;
+    juce::AudioProcessorValueTreeState apvts { *this, nullptr, "Parameters", CreateParameterLayout() };
+    // DDL<float> delayLine;
 
-    CircularBuffer<float> circularBuffer {2, 5};
+    // CircularBuffer<float> circularBuffer;
 
-    juce::AudioBuffer<float> delayBuffer{2, 256};
+    // From AudioProgrammer tutorial
+    juce::AudioBuffer<float> mDelayBuffer;
+    int mWritePosition = 0;
+    int mSampleRate = 44100;
+    int delayTime = 1000;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessor)
