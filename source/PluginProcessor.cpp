@@ -9,7 +9,7 @@ PluginProcessor::PluginProcessor()
     #endif
                           .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-        )
+        ), delay(apvts)
 {
 
 }
@@ -153,20 +153,13 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         const auto* bufferData = buffer.getReadPointer (channel);
-        const auto* delayBufferData = delay.getDelayBuffer().getReadPointer (channel);
         auto dryBuffer = buffer.getWritePointer(channel);
-/*         // read the values from buffer and store them in delayBuffer.
-        fillDelayBuffer (channel, bufferLength, delayBufferLength, bufferData);
-
+        // read the values from buffer and store them in delayBuffer.
+        delay.fillDelayBuffer(channel, bufferLength, bufferData);
         // read the values from the delayBuffer and write them to the audio buffer.
-        getFromDelayBuffer (buffer, channel, bufferLength, delayBufferLength, delayBufferData);
-
-        feedbackDelay(channel, bufferLength, delayBufferLength, dryBuffer); */
-
-        delay.fillDelayBuffer(channel, bufferLength, delayBufferLength, bufferData);
-        delay.getFromDelayBuffer(buffer, channel, bufferLength, delayBufferLength, delayBufferData);
-        delay.feedbackDelay(channel, bufferLength, delayBufferLength, dryBuffer); 
-
+        delay.getFromDelayBuffer(buffer, channel, bufferLength);
+        // apply feedback
+        delay.feedbackDelay(channel, bufferLength, dryBuffer); 
     }
     /* We read bufferLength values so we need to increment the write position
      * so that, next time, we read once again bufferLength values but don't 
@@ -208,7 +201,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::CreateParam
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
-    // delay.AppendToParameterLayout (layout);
+    delay.AppendToParameterLayout (layout);
 
     return layout;
 }
@@ -218,54 +211,4 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::CreateParam
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new PluginProcessor();
-}
-
-void PluginProcessor::fillDelayBuffer (int channel, const int bufferLength, const int delayBufferLength, const float* bufferData)
-{
-    // read the values from buffer and store them in delayBuffer.
-    if (mWritePosition + bufferLength < delayBufferLength) // if we're in range
-    {
-        mDelayBuffer.copyFromWithRamp (channel, mWritePosition, bufferData, bufferLength, 0.5, 0.5);
-    }
-    else // in this case, some values remain uncopied
-    {
-        const auto bufferRemaining = delayBufferLength - mWritePosition;
-
-        mDelayBuffer.copyFromWithRamp (channel, mWritePosition, bufferData, bufferRemaining, 0.5, 0.5);
-        mDelayBuffer.copyFromWithRamp (channel, 0, bufferData + bufferRemaining, bufferLength - bufferRemaining, 0.5, 0.5);
-    }
-}
-
-void PluginProcessor::getFromDelayBuffer (juce::AudioBuffer<float>& buffer, int channel, const int bufferLength, const int delayBufferLength, const float* delayBufferData)
-{
-    // The index from where we want to read data
-    // mSampleRate * (delayTime / 1000) -> conversion to an index of the delayTime in milliseconds
-    const int readPosition = static_cast<int> (delayBufferLength + mWritePosition - (mSampleRate * delayTime / 1000)) % delayBufferLength;
-
-    // if we're in range
-    if (bufferLength + readPosition < delayBufferLength)
-    {
-        buffer.copyFrom (channel, 0, delayBufferData + readPosition, bufferLength);
-    }
-    else // like when we wanted to fill the delay buffer, we need to be careful not to write out of bounds.
-    {
-        const int bufferRemaining = delayBufferLength - readPosition;
-        buffer.copyFrom (channel, 0, delayBufferData + readPosition, bufferRemaining);
-        buffer.copyFrom (channel, bufferRemaining, delayBufferData, bufferLength - bufferRemaining);
-    }
-}
-
-void PluginProcessor::feedbackDelay (int channel, const int bufferLength, const int delayBufferLength, float* dryBuffer)
-{
-    if (bufferLength + mWritePosition < delayBufferLength)
-    {
-        mDelayBuffer.addFromWithRamp (channel, mWritePosition, dryBuffer, bufferLength, 0.5, 0.5);
-    }
-    else
-    {
-        const int bufferRemaining = delayBufferLength - mWritePosition;
-
-        mDelayBuffer.addFromWithRamp(channel, bufferRemaining, dryBuffer, bufferRemaining, 0.5, 0.5);
-        mDelayBuffer.addFromWithRamp(channel, 0, dryBuffer, bufferLength - bufferRemaining, 0.5, 0.5);
-    }
 }

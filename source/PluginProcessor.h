@@ -39,13 +39,6 @@ public:
 
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-
-    // From AudioProgrammer tutorial
-    void fillDelayBuffer (int channel, const int bufferLength, const int delayBufferLength, const float* bufferData);
-
-    void getFromDelayBuffer (juce::AudioBuffer<float>& buffer, int channel, const int bufferLength, const int delayBufferLength, const float* delayBufferData);
-    void feedbackDelay (int channel, const int bufferLength, const int delayBufferLength, float* dryBuffer);
-
 private:
     /*======================== FUNCTIONS ===========================*/
     juce::AudioProcessorValueTreeState::ParameterLayout CreateParameterLayout();
@@ -53,12 +46,6 @@ private:
     /*======================== MEMBERS ===========================*/
     juce::AudioProcessorValueTreeState apvts { *this, nullptr, "Parameters", CreateParameterLayout() };
     
-    // From AudioProgrammer tutorial
-    juce::AudioBuffer<float> mDelayBuffer;
-    int mWritePosition = 0;
-    int mSampleRate = 44100;
-    int delayTime = 1000;
-
     Delay delay;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessor)
