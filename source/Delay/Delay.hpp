@@ -7,7 +7,7 @@
 class Delay
 {
 public:
-    Delay(juce::AudioProcessorValueTreeState& valueTree) : apvts(valueTree) {}
+    Delay(juce::AudioProcessorValueTreeState& valueTree);
 
     /**
      * @brief Set the Sample Rate object
@@ -80,6 +80,9 @@ public:
 private:
     juce::AudioBuffer<float> mDelayBuffer;
     juce::AudioProcessorValueTreeState& apvts;
+    juce::AudioParameterInt* mDelayTimeParameter = nullptr;
+    juce::AudioParameterFloat* mDelayFeedbackParameter = nullptr;
+    // juce::AudioParameterBool* mDelaySyncParameter = nullptr;
     
     int mSampleRate = 44100;
 
