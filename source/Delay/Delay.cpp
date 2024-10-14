@@ -2,6 +2,7 @@
 #include "juce_audio_basics/juce_audio_basics.h"
 #include "juce_audio_processors/juce_audio_processors.h"
 #include "juce_core/juce_core.h"
+#include "juce_dsp/juce_dsp.h"
 #include <memory>
 
 Delay::Delay(juce::AudioProcessorValueTreeState& valueTree) : apvts(valueTree),
@@ -25,6 +26,41 @@ void Delay::prepare(int numInputChannels, int sampleRate, int samplesPerBlock)
     mDelayBuffer.setSize(numInputChannels, bufferSize);
     mDelayBuffer.clear();
 }
+
+void Delay::process(juce::dsp::ProcessContextReplacing<float> context)
+{
+    auto block = context.getInputBlock();
+    auto numChannels = block.getNumChannels();
+
+
+    // TODO: DON'T ALLOCATE IN PROCESS!
+    // THIS IS A TEMPORARY SOLUTION.
+    juce::AudioBuffer<float> tempBuffer;
+    const auto numSamples = block.getNumSamples();
+    tempBuffer.setSize(numChannels, numSamples);
+    auto bufferLength = tempBuffer.getNumSamples();
+
+    block.copyTo(tempBuffer);
+
+    for (int channel = 0 ; channel < numChannels ; ++channel)
+    {
+        const auto* bufferData = tempBuffer.getReadPointer (channel);
+        auto dryBuffer = tempBuffer.getWritePointer(channel);
+        // read the values from buffer and store them in delayBuffer.
+        fillDelayBuffer(channel, bufferLength, bufferData);
+        // read the values from the delayBuffer and write them to the audio buffer.
+        getFromDelayBuffer(tempBuffer, channel, bufferLength);
+        // apply feedback
+        feedbackDelay(channel, bufferLength, dryBuffer); 
+    }
+    /* We read bufferLength values so we need to increment the write position
+     * so that, next time, we read once again bufferLength values but don't 
+     * overwrite the previously saved values.
+     */
+    mWritePosition += bufferLength;
+    mWritePosition %= mDelayBuffer.getNumSamples(); // wrap around
+}
+
 
 void Delay::fillDelayBuffer (int channel, const int bufferLength, const float* bufferData)
 {

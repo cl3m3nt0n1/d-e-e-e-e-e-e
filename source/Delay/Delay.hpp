@@ -2,6 +2,7 @@
 #define DELAY_HPP
 
 #include "juce_audio_processors/juce_audio_processors.h"
+#include "juce_dsp/juce_dsp.h"
 #include <juce_audio_basics/juce_audio_basics.h>
 
 class Delay
@@ -27,11 +28,9 @@ public:
 
     /**
      * @brief To be called within PluginProcessor::processBlock method
-     *        /!\ (NOT IMPLEMENTED YET) /!\ 
-     * 
-     * @param buffer the current audio buffer
+     *        /!\ (NOT WORKING YET) /!\ 
      */
-    void process(juce::AudioBuffer<float>& buffer);
+    void process(juce::dsp::ProcessContextReplacing<float> context);
 
     /**
      * @brief the read operation of a DDL. Reads the content of the AudioBuffer

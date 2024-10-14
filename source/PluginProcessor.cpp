@@ -1,4 +1,5 @@
 #include "PluginProcessor.h"
+#include "juce_dsp/juce_dsp.h"
 
 //==============================================================================
 PluginProcessor::PluginProcessor()
@@ -88,14 +89,6 @@ void PluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     juce::ignoreUnused (samplesPerBlock);
     juce::ignoreUnused (sampleRate);
-    // delayLine.prepare(sampleRate);
-/* 
-    // From AudioProgrammer tutorial
-    mSampleRate = static_cast<int> (sampleRate);
-    const int bufferSize = 2 * (mSampleRate + samplesPerBlock);
-
-    mDelayBuffer.setSize (numInputChannels, bufferSize);
-    mDelayBuffer.clear(); */
 
     delay.prepare(getTotalNumInputChannels(), static_cast<int> (sampleRate), samplesPerBlock);
 }
@@ -167,6 +160,11 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
      */
     delay.mWritePosition += bufferLength;
     delay.mWritePosition %= delayBufferLength; // wrap around
+
+/*     juce::dsp::AudioBlock<float> block(buffer);
+    juce::dsp::ProcessContextReplacing<float> context(block);
+
+    delay.process(context); */
 }
 
 //==============================================================================
