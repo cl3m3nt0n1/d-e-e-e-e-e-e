@@ -4,6 +4,7 @@
 #include "juce_audio_basics/juce_audio_basics.h"
 #include "juce_dsp/juce_dsp.h"
 #include <juce_audio_processors/juce_audio_processors.h>
+#include <memory>
 
 #if (MSVC)
     #include "ipps.h"
@@ -59,6 +60,10 @@ private:
     juce::AudioParameterFloat* ReverbWetParameter = nullptr;
     juce::AudioParameterFloat* ReverbDryParameter = nullptr;
     juce::AudioParameterFloat* ReverbWidthParameter = nullptr;
+
+    juce::dsp::DryWetMixer<float> dryWet;
+    juce::AudioParameterFloat* mPluginDryWetParameter = nullptr;
+    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessor)
 };
