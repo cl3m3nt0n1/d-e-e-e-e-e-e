@@ -43,7 +43,21 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 private:
     /*======================== FUNCTIONS ===========================*/
+    /**
+     * @brief Create a Parameter Layout object. 
+     *        Used when the apvts is created.
+     * 
+     * @return juce::AudioProcessorValueTreeState::ParameterLayout 
+     */
     juce::AudioProcessorValueTreeState::ParameterLayout CreateParameterLayout();
+    
+    /**
+     * @brief Used by the reverb to dump the values of the various
+     *        reverb's related paramters from the APVTS and assign
+     *        them to their respective member variables. 
+     *
+     * @return juce::dsp::Reverb::Parameters 
+     */
     juce::dsp::Reverb::Parameters dumpParametersFromAPVTS();
 
     /*======================== MEMBERS ===========================*/
@@ -51,8 +65,7 @@ private:
     
     Delay delay;
     
-    
-    
+    // Reverb from juce::dsp and related parameters
     juce::dsp::Reverb reverb;
     juce::AudioParameterFloat* ReverbDampingParameter = nullptr;
     juce::AudioParameterBool* ReverbFreezeParameter = nullptr;
@@ -61,6 +74,7 @@ private:
     juce::AudioParameterFloat* ReverbDryParameter = nullptr;
     juce::AudioParameterFloat* ReverbWidthParameter = nullptr;
 
+    // juce::dsp drywet mixer and related audio parameter
     juce::dsp::DryWetMixer<float> dryWet;
     juce::AudioParameterFloat* mPluginDryWetParameter = nullptr;
     
