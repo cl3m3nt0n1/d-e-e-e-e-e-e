@@ -1,16 +1,40 @@
 #include "DelayComponent.hpp"
+#include "juce_events/juce_events.h"
 #include "juce_graphics/juce_graphics.h"
 #include "juce_gui_basics/juce_gui_basics.h"
 
 DelayComponent::DelayComponent(juce::AudioProcessorValueTreeState& audioTree) :
-    backgroundColour(juce::Colours::green),
+    mbackgroundColour(juce::Colour::fromRGB(50, 222, 138)),
     apvts(audioTree),
-    DelayTimeSliderAttachment(apvts, "Delay Time", DelayTimeSlider),
-    DelayFeedbackSliderAttachment(apvts, "Delay FeedBack", DelayFeedbackSlider)
+    mDelayTimeSliderAttachment(apvts, "Delay Time", mDelayTimeSlider),
+    mDelayFeedbackSliderAttachment(apvts, "Delay Feedback", mDelayFeedbackSlider)
 {
     setLookAndFeel(new CustomLookNFeel);
-    addAndMakeVisible(DelayFeedbackSlider);
-    addAndMakeVisible(DelayTimeSlider);
+
+    mDelayTimeSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    mDelayFeedbackSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+
+    mDelayTimeSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+    mDelayFeedbackSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    juce::FontOptions fontOptions("JetBrainsMono Nerd Font", "Bold", 18.0f);
+    mDelayTimeSliderLabel.setFont(fontOptions);
+    mDelayFeedbackSliderLabel.setFont(fontOptions);
+    
+    mDelayFeedbackSliderLabel.setColour (juce::Label::textColourId, juce::Colours::black);
+    mDelayTimeSliderLabel.setColour (juce::Label::textColourId, juce::Colours::black);
+    
+    mDelayFeedbackSliderLabel.setJustificationType (juce::Justification::centredTop);
+    mDelayTimeSliderLabel.setJustificationType (juce::Justification::centredTop);
+
+    mDelayTimeSliderLabel.setText("DLY::TIM", juce::NotificationType::dontSendNotification);
+    mDelayFeedbackSliderLabel.setText("DLY::FBK", juce::NotificationType::dontSendNotification);
+
+    addAndMakeVisible(mDelayFeedbackSlider);
+    addAndMakeVisible(mDelayTimeSlider);
+    addAndMakeVisible(mDelayFeedbackSliderLabel);
+    addAndMakeVisible(mDelayTimeSliderLabel);
+
 }
 
 DelayComponent::~DelayComponent()
@@ -20,7 +44,7 @@ DelayComponent::~DelayComponent()
 
 void DelayComponent::paint (juce::Graphics& g)
 {
-    g.fillAll(backgroundColour);
+    g.fillAll(mbackgroundColour);
 }
 
 void DelayComponent::resized()
@@ -29,10 +53,31 @@ void DelayComponent::resized()
     using Track = juce::Grid::TrackInfo;
     using Fr = juce::Grid::Fr;
 
-    grid.templateRows    = { Track (Fr (1)) };
-    grid.templateColumns = { Track (Fr (1)), Track (Fr (1)) };
+    grid.templateRows    = { 
+        Track (Fr (1)), 
+        Track (Fr (4)), 
+        Track (Fr (1)), 
+        Track (Fr (1)) 
+        };
+        
+    grid.templateColumns = { 
+        Track (Fr (1)), 
+        Track (Fr (4)), 
+        Track (Fr (1)), 
+        Track (Fr (4)), 
+        Track (Fr (1)) 
+        };
 
-    grid.items = { juce::GridItem (DelayTimeSlider), juce::GridItem (DelayTimeSlider) };
 
+    for (int i = 0; i < 25; ++i)
+        grid.items.set(i, juce::GridItem(nullptr));
+
+
+    grid.items.set(6, juce::GridItem(mDelayTimeSlider));
+    grid.items.set(11, juce::GridItem(mDelayTimeSliderLabel));
+    
+    grid.items.set(8, juce::GridItem(mDelayFeedbackSlider));
+    grid.items.set(13, juce::GridItem(mDelayFeedbackSliderLabel));
+    
     grid.performLayout (getLocalBounds());
 }

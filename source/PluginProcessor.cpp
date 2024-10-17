@@ -235,25 +235,25 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::CreateParam
   
     // Reverb Parameters
     layout.add(std::make_unique<juce::AudioParameterFloat>("Reverb Damping", "Reverb Damping",
-    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.0f));  
+    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.1f));  
     
     layout.add(std::make_unique<juce::AudioParameterBool>("Reverb Freeze", "Reverb Freeze", false));  
     
     layout.add(std::make_unique<juce::AudioParameterFloat>("Reverb Room Size", "Reverb Room Size",
-    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.0f));  
+    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.2f));  
     
     layout.add(std::make_unique<juce::AudioParameterFloat>("Reverb Wet", "Reverb Wet",
-    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.0f));  
+    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.5f));  
     
     layout.add(std::make_unique<juce::AudioParameterFloat>("Reverb Dry", "Reverb Dry",
-    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.0f));
+    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.2f));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>("Reverb Width", "Reverb Width",
-    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.0f));
+    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.2f));
 
     //Plugin Parameters
     layout.add(std::make_unique<juce::AudioParameterFloat>("Plugin Dry Wet", "Plugin Dry Wet", 
-    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f),0.0f));
+    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f),0.8f));
 
     return layout;
 }

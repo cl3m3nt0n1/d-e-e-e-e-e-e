@@ -61,7 +61,6 @@ void PluginEditor::paint (juce::Graphics& g)
     horizontalGradient.multiplyOpacity(0);
     g.setGradientFill (horizontalGradient);
     g.fillRect (bounds);
-
 }
 
 void PluginEditor::resized()
@@ -75,7 +74,35 @@ void PluginEditor::resized()
     inspectButton.setBounds (getLocalBounds().withSizeKeepingCentre (100, 50));
     #endif
 
-    delayComponent.setBounds(20, 50, 226, 226);
+
+    juce::Grid grid;
+
+    using Track = juce::Grid::TrackInfo;
+    using Fr = juce::Grid::Fr;
+
+    grid.templateRows    = { 
+                             Track (Fr (1)), // to center everything
+                             Track (Fr (2)), // Deeeeee
+                             Track (Fr (5)), // Main Content
+                             Track (Fr (5)), // Main Content
+                             Track (Fr (1))
+                             }; // to center everything
+    
+    grid.templateColumns = { 
+                             Track (Fr (1)), // to center everything
+                             Track (Fr (6)), //Main Content
+                             Track (Fr (4)), // Main Content
+                             Track (Fr (6)), // Main Content
+                             Track (Fr (1)) 
+                            }; // to center everything 
+
+    for (int i = 0; i < 25; ++i)
+        grid.items.set(i, juce::GridItem(nullptr));
+
+
+    grid.items.set(11, juce::GridItem(delayComponent));
+
+    grid.performLayout (getLocalBounds());
 
 
 }   

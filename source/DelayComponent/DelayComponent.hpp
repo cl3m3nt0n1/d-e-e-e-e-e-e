@@ -16,15 +16,17 @@ public:
     void resized() override;
 
 private:
-    juce::Colour backgroundColour;
+    juce::Colour mbackgroundColour;
     
     juce::AudioProcessorValueTreeState& apvts;
 
-    juce::Slider DelayTimeSlider, DelayFeedbackSlider;
+    juce::Slider mDelayTimeSlider, mDelayFeedbackSlider;
+    juce::Label mDelayTimeSliderLabel, mDelayFeedbackSliderLabel;
     
     juce::AudioProcessorValueTreeState::SliderAttachment
-        DelayTimeSliderAttachment,
-        DelayFeedbackSliderAttachment;
+        mDelayTimeSliderAttachment,
+        mDelayFeedbackSliderAttachment;
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayComponent)
 };
