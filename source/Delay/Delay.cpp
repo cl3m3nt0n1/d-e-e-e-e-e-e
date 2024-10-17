@@ -131,7 +131,7 @@ juce::AudioBuffer<float>& Delay::getDelayBuffer()
 void Delay::AppendToParameterLayout (juce::AudioProcessorValueTreeState::ParameterLayout& layout)
 {    
     layout.add(std::make_unique<juce::AudioParameterFloat>("Delay Feedback", "Delay Feedback",
-        juce::NormalisableRange<float>(-1.0f, 1.0f, 0.1f, 1.f),0.0f));
+        juce::NormalisableRange<float>(0.01f, 1.0f, 0.01f, 1.f),0.01f));
     
     layout.add(std::make_unique<juce::AudioParameterInt>("Delay Time", "Delay Time", 1, 2000, 500));
 

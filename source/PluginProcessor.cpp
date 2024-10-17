@@ -1,8 +1,5 @@
 #include "PluginProcessor.h"
-#include "juce_audio_processors/juce_audio_processors.h"
-#include "juce_core/juce_core.h"
-#include "juce_dsp/juce_dsp.h"
-#include <memory>
+#include "PluginEditor.h"
 
 //==============================================================================
 PluginProcessor::PluginProcessor()
@@ -209,7 +206,7 @@ bool PluginProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* PluginProcessor::createEditor()
 {
-       return new PluginEditor (*this);
+    return new PluginEditor (*this);
     // return new juce::GenericAudioProcessorEditor (*this);
 }
 

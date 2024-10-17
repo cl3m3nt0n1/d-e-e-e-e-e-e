@@ -1,11 +1,9 @@
-//
-// Created by clementone on 01/10/24.
-//
-
 #ifndef FREECODECAMPPLUGIN_SOURCE_CUSTOMLOOKNFEEL_H
 #define FREECODECAMPPLUGIN_SOURCE_CUSTOMLOOKNFEEL_H
 
+#include "juce_graphics/juce_graphics.h"
 #include <juce_gui_basics/juce_gui_basics.h>
+
 
 class CustomLookNFeel : public juce::LookAndFeel_V4
 {

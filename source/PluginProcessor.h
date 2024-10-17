@@ -4,7 +4,6 @@
 #include "juce_audio_basics/juce_audio_basics.h"
 #include "juce_dsp/juce_dsp.h"
 #include <juce_audio_processors/juce_audio_processors.h>
-#include <memory>
 
 #if (MSVC)
     #include "ipps.h"
@@ -41,6 +40,8 @@ public:
 
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+
+    juce::AudioProcessorValueTreeState& getApvts() { return apvts; }
 private:
     /*======================== FUNCTIONS ===========================*/
     /**
