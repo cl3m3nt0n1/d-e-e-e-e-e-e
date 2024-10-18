@@ -1,5 +1,4 @@
 #include "PluginEditor.h"
-#include "juce_graphics/juce_graphics.h"
 
 PluginEditor::PluginEditor (PluginProcessor& p)
     : AudioProcessorEditor (&p), processorRef (p),

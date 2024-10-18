@@ -1,7 +1,9 @@
+#pragma once
+
 #include "juce_audio_processors/juce_audio_processors.h"
 #include "juce_core/system/juce_PlatformDefs.h"
 #include "juce_gui_basics/juce_gui_basics.h"
-#include "../CustomLookNFeel/CustomLookNFeel.h"
+#include "../ReverbComponent/ReverbComponent.hpp"
 
 class DelayComponent : public juce::Component
 {
@@ -20,9 +22,9 @@ private:
     
     juce::AudioProcessorValueTreeState& apvts;
 
-    juce::Slider mDelayTimeSlider, mDelayFeedbackSlider;
-    juce::Label mDelayTimeSliderLabel, mDelayFeedbackSliderLabel;
-    
+    SliderAndLabel mDelayTimeSlider {"DLY::TIM"}, 
+                   mDelayFeedbackSlider {"DLY::FBK"};
+
     juce::AudioProcessorValueTreeState::SliderAttachment
         mDelayTimeSliderAttachment,
         mDelayFeedbackSliderAttachment;

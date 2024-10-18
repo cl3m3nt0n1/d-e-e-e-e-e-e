@@ -3,33 +3,11 @@
 DelayComponent::DelayComponent(juce::AudioProcessorValueTreeState& audioTree) :
     mbackgroundColour(juce::Colour::fromRGB(50, 222, 138)),
     apvts(audioTree),
-    mDelayTimeSliderAttachment(apvts, "Delay Time", mDelayTimeSlider),
-    mDelayFeedbackSliderAttachment(apvts, "Delay Feedback", mDelayFeedbackSlider)
+    mDelayTimeSliderAttachment(apvts, "Delay Time", mDelayTimeSlider.getslider()),
+    mDelayFeedbackSliderAttachment(apvts, "Delay Feedback", mDelayFeedbackSlider.getslider())
 {
-    mDelayTimeSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    mDelayFeedbackSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-
-    mDelayTimeSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-    mDelayFeedbackSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-
-    juce::FontOptions fontOptions("JetBrainsMono Nerd Font", "Bold", 18.0f);
-    mDelayTimeSliderLabel.setFont(fontOptions);
-    mDelayFeedbackSliderLabel.setFont(fontOptions);
-    
-    mDelayFeedbackSliderLabel.setColour (juce::Label::textColourId, juce::Colours::black);
-    mDelayTimeSliderLabel.setColour (juce::Label::textColourId, juce::Colours::black);
-    
-    mDelayFeedbackSliderLabel.setJustificationType (juce::Justification::centredTop);
-    mDelayTimeSliderLabel.setJustificationType (juce::Justification::centredTop);
-
-    mDelayTimeSliderLabel.setText("DLY::TIM", juce::NotificationType::dontSendNotification);
-    mDelayFeedbackSliderLabel.setText("DLY::FBK", juce::NotificationType::dontSendNotification);
-
     addAndMakeVisible(mDelayFeedbackSlider);
     addAndMakeVisible(mDelayTimeSlider);
-    addAndMakeVisible(mDelayFeedbackSliderLabel);
-    addAndMakeVisible(mDelayTimeSliderLabel);
-
 }
 
 DelayComponent::~DelayComponent()
@@ -54,29 +32,24 @@ void DelayComponent::resized()
 
     grid.templateRows    = { 
         Track (Fr (1)), 
-        Track (Fr (3)), 
-        Track (Fr (1)), 
+        Track (Fr (10)), 
         Track (Fr (1)) 
         };
         
     grid.templateColumns = { 
         Track (Fr (1)), 
-        Track (Fr (3)), 
-        Track (Fr (1)), 
-        Track (Fr (3)), 
+        Track (Fr (10)), 
+        Track (Fr (10)), 
         Track (Fr (1)) 
         };
 
 
-    for (int i = 0; i < 25; ++i)
+    for (int i = 0; i < 12; ++i)
         grid.items.set(i, juce::GridItem(nullptr));
 
 
-    grid.items.set(6, juce::GridItem(mDelayTimeSlider));
-    grid.items.set(11, juce::GridItem(mDelayTimeSliderLabel));
-    
-    grid.items.set(8, juce::GridItem(mDelayFeedbackSlider));
-    grid.items.set(13, juce::GridItem(mDelayFeedbackSliderLabel));
+    grid.items.set(5, juce::GridItem(mDelayTimeSlider));   
+    grid.items.set(6, juce::GridItem(mDelayFeedbackSlider));
     
     grid.performLayout (getLocalBounds());
 }
