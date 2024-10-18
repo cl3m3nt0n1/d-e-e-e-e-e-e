@@ -68,24 +68,45 @@ void PluginEditor::paint (juce::Graphics& g)
      */
     auto componentStroke = juce::PathStrokeType(6.0f, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded);
     auto delayComponentPath = juce::Path();
-    delayComponentPath.addRoundedRectangle(delayComponent.getBounds(), 5.0f);
+    delayComponentPath.addRoundedRectangle(delayComponent.getBounds().getX(),
+                                           delayComponent.getBounds().getY(), 
+                                           delayComponent.getBounds().getWidth()  + 3, 
+                                           delayComponent.getBounds().getHeight() + 3, 
+                                           3.0f);
     g.setColour(juce::Colours::white);
     g.strokePath(delayComponentPath, componentStroke);
-    juce::DropShadow delayShadow;
+   /*  juce::DropShadow delayShadow;
     delayShadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
+    delayShadow.offset = juce::Point(5,5);
     delayShadow.drawForPath(g, delayComponentPath);
-
+ */
     /*
      * Reverb component contour and drop shadow 
      */
     auto reverbComponentPath = juce::Path();
-    reverbComponentPath.addRoundedRectangle(reverbComponent.getBounds(), 5.0f);
+    reverbComponentPath.addRoundedRectangle(reverbComponent.getBounds().getX(),
+                                            reverbComponent.getBounds().getY(), 
+                                            reverbComponent.getBounds().getWidth()  + 3, 
+                                            reverbComponent.getBounds().getHeight() + 3, 
+                                            3.0f);
     g.setColour(juce::Colours::white);
     g.strokePath(reverbComponentPath, componentStroke);
-    juce::DropShadow reverbShadow;
+/*     juce::DropShadow reverbShadow;
     reverbShadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
-    reverbShadow.drawForPath(g, reverbComponentPath);
-    
+    reverbShadow.offset = juce::Point(10,10);
+    reverbShadow.drawForPath(g, reverbComponentPath); */
+
+    /*
+     * Dry/Wet contour and drop shadow 
+     */
+    auto dryWetPath = juce::Path();
+    dryWetPath.addRoundedRectangle(mPluginDryWetSlider.getBounds(), 3.0f);
+    g.setColour(juce::Colours::white);
+    g.strokePath(dryWetPath, componentStroke);
+    /* juce::DropShadow dryWetShadow;
+    dryWetShadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
+    dryWetShadow.offset = juce::Point(5,5);
+    dryWetShadow.drawForPath(g, dryWetPath) */;
 }
 
 void PluginEditor::resized()
@@ -103,19 +124,19 @@ void PluginEditor::resized()
     grid.setGap(juce::Grid::Px(30));
 
     grid.templateRows    = { 
-                             Track (Fr (1)), // to center everything
+                             Track (Fr (0)), // to center everything
                              Track (Fr (2)), // Deeeeee
                              Track (Fr (6)), // Main Content
                              Track (Fr (10)), // Main Content
-                             Track (Fr (1))
+                             Track (Fr (0))
                              }; // to center everything
     
     grid.templateColumns = { 
-                             Track (Fr (1)), // to center everything
-                             Track (Fr (50)), // Main Content
+                             Track (Fr (0)), // to center everything
+                             Track (Fr (40)), // Main Content
                              Track (Fr (20)), // Main Content
                              Track (Fr (30)), // Main Content
-                             Track (Fr (1)) 
+                             Track (Fr (0)) 
                             }; // to center everything 
 
     for (int i = 0; i < 25; ++i)

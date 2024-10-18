@@ -1,6 +1,7 @@
 #pragma once
 
 #include "juce_graphics/juce_graphics.h"
+#include <cmath>
 #include <juce_gui_basics/juce_gui_basics.h>
 
 
@@ -29,9 +30,9 @@ public:
 
         // Drawing the pointer
         juce::Path p;
-        auto pointerLength = radius * 0.1f;
-        auto pointerThickness = 5.0f;
-        p.addRectangle(-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
+        auto pointerLength = radius * log(1.3);
+        auto pointerThickness = 3.0f;
+        p.addRectangle(-pointerLength * 0.3f, -radius, pointerThickness, pointerLength);
         p.applyTransform (juce::AffineTransform::rotation (angle).translated (centreX, centreY));
         g.setColour (juce::Colours::white);
         g.fillPath (p);
@@ -43,7 +44,7 @@ public:
         shadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0),
             juce::uint8(0), 0.25f);
         shadow.radius = radius + 2;
-        shadow.offset = juce::Point(5, 5);
+        shadow.offset = juce::Point(3, 3);
         shadow.drawForPath (g, ellipseAsPath);
 
 

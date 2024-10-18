@@ -66,7 +66,7 @@ public:
 
         grid.templateRows = 
         {
-            Track(Fr(4)),
+            Track(Fr(3)),
             Track(Fr(1))
         };
 
