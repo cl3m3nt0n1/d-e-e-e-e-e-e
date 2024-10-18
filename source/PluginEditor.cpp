@@ -1,8 +1,5 @@
 #include "PluginEditor.h"
-#include "CustomLookNFeel/CustomLookNFeel.h"
 #include "juce_graphics/juce_graphics.h"
-#include "juce_gui_basics/juce_gui_basics.h"
-#include <vector>
 
 PluginEditor::PluginEditor (PluginProcessor& p)
     : AudioProcessorEditor (&p), processorRef (p),
@@ -43,16 +40,27 @@ PluginEditor::~PluginEditor()
 
 void PluginEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    auto area = getBounds();
 
-    auto bounds = getBounds();
-
-    juce::ColourGradient gradient;
-    auto horizontalGradient = gradient.horizontal(juce::Colours::pink, juce::Colours::green, bounds);
-    horizontalGradient.multiplyOpacity(0);
-    g.setGradientFill (horizontalGradient);
-    g.fillRect (bounds);
+    /*
+     * BACKGROUND RENDERING 
+     */
+    juce::Path firstTriangle;
+    juce::Path secondTriangle;
+    auto pathStroke = juce::PathStrokeType(6.0f);
+    
+    firstTriangle.addTriangle (area.getBottomLeft().toFloat(), area.getTopLeft().toFloat(), area.getTopRight().toFloat());
+    secondTriangle.addTriangle (area.getBottomRight().toFloat(), area.getBottomLeft().toFloat(), area.getTopRight().toFloat());
+    
+    g.setColour(juce::Colour::fromRGB(225, 90, 151));
+    g.fillPath (firstTriangle);
+    g.setColour(juce::Colours::white);
+    g.strokePath(firstTriangle, pathStroke);
+    
+    g.setColour(juce::Colour::fromRGB(50, 222, 138));
+    g.fillPath (secondTriangle);
+    g.setColour(juce::Colours::white);
+    g.strokePath(secondTriangle, pathStroke);
 }
 
 void PluginEditor::resized()

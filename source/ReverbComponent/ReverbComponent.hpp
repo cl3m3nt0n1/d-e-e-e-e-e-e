@@ -17,7 +17,7 @@ struct SliderAndLabel : public juce::Component
 {
 public:
     SliderAndLabel(juce::String sliderLabel) :slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
-                      juce::Slider::TextEntryBoxPosition::TextBoxAbove)
+                      juce::Slider::TextEntryBoxPosition::NoTextBox)
     {
         juce::FontOptions fontOptions("JetBrainsMono Nerd Font", "Bold", 18.0f);
         
