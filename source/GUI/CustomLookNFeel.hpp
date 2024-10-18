@@ -1,5 +1,4 @@
-#ifndef FREECODECAMPPLUGIN_SOURCE_CUSTOMLOOKNFEEL_H
-#define FREECODECAMPPLUGIN_SOURCE_CUSTOMLOOKNFEEL_H
+#pragma once
 
 #include "juce_graphics/juce_graphics.h"
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -52,5 +51,3 @@ public:
 private:
 
 };
-
-#endif //FREECODECAMPPLUGIN_SOURCE_CUSTOMLOOKNFEEL_H

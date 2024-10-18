@@ -6,9 +6,9 @@
 #include "melatonin_inspector/melatonin_inspector.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 
-#include "CustomLookNFeel/CustomLookNFeel.h"
-#include "DelayComponent/DelayComponent.hpp"
-#include "ReverbComponent/ReverbComponent.hpp"
+#include "GUI/CustomLookNFeel/CustomLookNFeel.h"
+#include "GUI/DelayComponent/DelayComponent.hpp"
+#include "GUI/ReverbComponent/ReverbComponent.hpp"
 
 //==============================================================================
 class PluginEditor : public juce::AudioProcessorEditor
