@@ -62,6 +62,30 @@ void PluginEditor::paint (juce::Graphics& g)
     g.fillPath (secondTriangle);
     g.setColour(juce::Colours::white);
     g.strokePath(secondTriangle, pathStroke);
+
+    /*
+     * Delay component contour and drop shadow 
+     */
+    auto componentStroke = juce::PathStrokeType(6.0f, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded);
+    auto delayComponentPath = juce::Path();
+    delayComponentPath.addRoundedRectangle(delayComponent.getBounds(), 5.0f);
+    g.setColour(juce::Colours::white);
+    g.strokePath(delayComponentPath, componentStroke);
+    juce::DropShadow delayShadow;
+    delayShadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
+    delayShadow.drawForPath(g, delayComponentPath);
+
+    /*
+     * Reverb component contour and drop shadow 
+     */
+    auto reverbComponentPath = juce::Path();
+    reverbComponentPath.addRoundedRectangle(reverbComponent.getBounds(), 5.0f);
+    g.setColour(juce::Colours::white);
+    g.strokePath(reverbComponentPath, componentStroke);
+    juce::DropShadow reverbShadow;
+    reverbShadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
+    reverbShadow.drawForPath(g, reverbComponentPath);
+    
 }
 
 void PluginEditor::resized()
@@ -76,21 +100,21 @@ void PluginEditor::resized()
     using Track = juce::Grid::TrackInfo;
     using Fr = juce::Grid::Fr;
 
-    grid.setGap(juce::Grid::Px(10));
+    grid.setGap(juce::Grid::Px(30));
 
     grid.templateRows    = { 
                              Track (Fr (1)), // to center everything
                              Track (Fr (2)), // Deeeeee
-                             Track (Fr (5)), // Main Content
-                             Track (Fr (5)), // Main Content
+                             Track (Fr (6)), // Main Content
+                             Track (Fr (10)), // Main Content
                              Track (Fr (1))
                              }; // to center everything
     
     grid.templateColumns = { 
                              Track (Fr (1)), // to center everything
-                             Track (Fr (6)), // Main Content
-                             Track (Fr (4)), // Main Content
-                             Track (Fr (6)), // Main Content
+                             Track (Fr (50)), // Main Content
+                             Track (Fr (20)), // Main Content
+                             Track (Fr (30)), // Main Content
                              Track (Fr (1)) 
                             }; // to center everything 
 

@@ -1,26 +1,19 @@
 #pragma once
 
+#include "juce_core/juce_core.h"
 #include <juce_gui_basics/juce_gui_basics.h>
-/**
- * @brief a basic struct inheriting from juce::component
- *        to hold a slider and a label arranged in a 
- *        simple grid way.
- * 
- */
-struct SliderAndLabel : public juce::Component
+
+struct CompAndLabel : public juce::Component
 {
 public:
-    SliderAndLabel(juce::String sliderLabel) :slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
-                      juce::Slider::TextEntryBoxPosition::NoTextBox)
+    CompAndLabel(juce::String labelText) 
     {
-        juce::FontOptions fontOptions("JetBrainsMono Nerd Font", "Bold", 20.0f);
-        
+        juce::FontOptions fontOptions("JetBrainsMono Nerd Font", "Regular", 18.0f);
         label.setFont(fontOptions);
         label.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
         label.setJustificationType(juce::Justification::centredTop);
-        label.setText(sliderLabel, juce::NotificationType::dontSendNotification);
+        label.setText(labelText, juce::NotificationType::dontSendNotification);
 
-        addAndMakeVisible(slider);
         addAndMakeVisible(label);
     }
 
@@ -34,7 +27,7 @@ public:
                              label.getBoundsInParent().getTopLeft().y, 
                              label.getBoundsInParent().getWidth(), 
                              label.getBoundsInParent().getHeight(), 
-                             juce::Justification::centredTop, 5);
+                             juce::Justification::centredTop, 10);
         glyphs.createPath(glyphPath);
         
         g.setColour(juce::Colours::white);
@@ -45,6 +38,25 @@ public:
         shadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
         shadow.drawForPath(g, glyphPath);
     }
+protected:
+    juce::Label label;
+};
+
+
+/**
+ * @brief a basic struct inheriting from juce::component
+ *        to hold a slider and a label arranged in a 
+ *        simple grid way.
+ * 
+ */
+struct SliderAndLabel : public CompAndLabel
+{
+public:
+    SliderAndLabel(juce::String labelText) : CompAndLabel(labelText), slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
+                      juce::Slider::TextEntryBoxPosition::NoTextBox)
+    {
+        addAndMakeVisible(slider);
+    }
 
     void resized() override
     {
@@ -54,7 +66,7 @@ public:
 
         grid.templateRows = 
         {
-            Track(Fr(2)),
+            Track(Fr(4)),
             Track(Fr(1))
         };
 
@@ -74,50 +86,18 @@ public:
     
 private:
     juce::Slider slider;
-    juce::Label label;
 };
 
 
 /**
  * @brief Same thing but with a juce::ToggleButton.
  */
-struct ToggleAndLabel : public juce::Component
+struct ToggleAndLabel : public CompAndLabel
 {
 public:
-    ToggleAndLabel(juce::String sliderLabel)
+    ToggleAndLabel(juce::String toggleLabel): CompAndLabel(toggleLabel)
     {
-        juce::FontOptions fontOptions("JetBrainsMono Nerd Font", "Bold", 18.0f);
-        
-        label.setFont(fontOptions);
-        label.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
-        label.setJustificationType(juce::Justification::centredTop);
-        label.setText(sliderLabel, juce::NotificationType::dontSendNotification);
-    
         addAndMakeVisible(toggle);
-        addAndMakeVisible(label);
-
-    }
-
-    void paint(juce::Graphics& g) override
-    {
-
-        juce::Path glyphPath;
-        juce::GlyphArrangement glyphs;
-        glyphs.addFittedText(label.getFont(), label.getText(), 
-                             label.getBoundsInParent().getTopLeft().x, 
-                             label.getBoundsInParent().getTopLeft().y, 
-                             label.getBoundsInParent().getWidth(), 
-                             label.getBoundsInParent().getHeight(), 
-                             juce::Justification::centredTop, 5);
-        glyphs.createPath(glyphPath);
-        
-        g.setColour(juce::Colours::white);
-        juce::PathStrokeType strokeType(4.0f);
-        g.strokePath(glyphPath, strokeType);
-        g.fillPath(glyphPath);
-        juce::DropShadow shadow;
-        shadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
-        shadow.drawForPath(g, glyphPath);
     }
 
     void resized() override
@@ -145,8 +125,6 @@ public:
 
     juce::ToggleButton& getToggle() { return toggle; }
     
-    
 private:
     juce::ToggleButton toggle;
-    juce::Label label;
 };

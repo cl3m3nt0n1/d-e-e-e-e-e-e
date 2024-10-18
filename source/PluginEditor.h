@@ -6,7 +6,7 @@
 #include "melatonin_inspector/melatonin_inspector.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 
-#include "GUI/CustomLookNFeel/CustomLookNFeel.h"
+#include "GUI/CustomLookNFeel.hpp"
 #include "GUI/DelayComponent/DelayComponent.hpp"
 #include "GUI/ReverbComponent/ReverbComponent.hpp"
 
