@@ -8,21 +8,7 @@
 
 #include "CustomLookNFeel/CustomLookNFeel.h"
 #include "DelayComponent/DelayComponent.hpp"
-
-
-
-/**
- * @brief a structure to ease the Slider creation process.
- * Every CustomRotarySlider will be the same
- * and each one of them suits our needs.
- * */
-struct CustomRotarySlider : juce::Slider
-{
-    CustomRotarySlider() : juce::Slider (juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
-                             juce::Slider::TextEntryBoxPosition::TextBoxBelow)
-    {
-    }
-};
+#include "ReverbComponent/ReverbComponent.hpp"
 
 //==============================================================================
 class PluginEditor : public juce::AudioProcessorEditor
@@ -38,30 +24,11 @@ public:
 private:
 
     /*======================== METHODS ===========================*/
-    /**
-    * @brief getter for Sliders.
-    * @returns a vector containing every sliders related to the reverb.
-    * */
-    std::vector<juce::Component*> getReverbSliders();
-
-    /**
-    * @brief getter for Sliders.
-    * @returns a vector containing every sliders related to the delay.
-    * */
-    std::vector<juce::Component*> getDelaySliders();
-
-    /**
-    * @brief getter for Sliders.
-    * @returns a vector containing every of the UI.
-    * */
-    std::vector<juce::Component*> getAllSliders();
-
-    
-
     /*======================== MEMBERS ===========================*/
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     PluginProcessor& processorRef;
+    CustomLookNFeel customLook;
     
     #if DEBUG
     std::unique_ptr<melatonin::Inspector> inspector;
@@ -69,24 +36,7 @@ private:
     #endif
 
     DelayComponent delayComponent;
-
-    CustomRotarySlider ReverbDampingSlider,
-        ReverbRoomSizeSlider,
-        ReverbWetSlider,
-        ReverbDrySlider,
-        ReverbWidthSlider,
-        PluginDryWetSlider;
-
-    juce::ToggleButton ReverbFreezeButton;
-
-
-    juce::AudioProcessorValueTreeState::SliderAttachment
-    ReverbDampingSliderAttachment,
-    ReverbRoomSizeSliderAttachment,
-    ReverbWetSliderAttachment,
-    ReverbDrySliderAttachment,
-    ReverbWidthSliderAttachment,
-    PluginDryWetSliderAttachment;
+    ReverbComponent reverbComponent;
     
     
 

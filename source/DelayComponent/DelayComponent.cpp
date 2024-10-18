@@ -9,8 +9,6 @@ DelayComponent::DelayComponent(juce::AudioProcessorValueTreeState& audioTree) :
     mDelayTimeSliderAttachment(apvts, "Delay Time", mDelayTimeSlider),
     mDelayFeedbackSliderAttachment(apvts, "Delay Feedback", mDelayFeedbackSlider)
 {
-    setLookAndFeel(new CustomLookNFeel);
-
     mDelayTimeSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     mDelayFeedbackSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
 
@@ -39,7 +37,6 @@ DelayComponent::DelayComponent(juce::AudioProcessorValueTreeState& audioTree) :
 
 DelayComponent::~DelayComponent()
 {
-    setLookAndFeel(nullptr);
 }
 
 void DelayComponent::paint (juce::Graphics& g)
@@ -55,16 +52,16 @@ void DelayComponent::resized()
 
     grid.templateRows    = { 
         Track (Fr (1)), 
-        Track (Fr (4)), 
+        Track (Fr (3)), 
         Track (Fr (1)), 
         Track (Fr (1)) 
         };
         
     grid.templateColumns = { 
         Track (Fr (1)), 
-        Track (Fr (4)), 
+        Track (Fr (3)), 
         Track (Fr (1)), 
-        Track (Fr (4)), 
+        Track (Fr (3)), 
         Track (Fr (1)) 
         };
 

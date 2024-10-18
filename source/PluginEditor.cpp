@@ -6,17 +6,12 @@
 
 PluginEditor::PluginEditor (PluginProcessor& p)
     : AudioProcessorEditor (&p), processorRef (p),
-    ReverbDampingSliderAttachment(processorRef.getApvts(), "Reverb Damping", ReverbDampingSlider),
-    ReverbRoomSizeSliderAttachment(processorRef.getApvts(), "Reverb Room Size", ReverbRoomSizeSlider),
-    ReverbWetSliderAttachment(processorRef.getApvts(), "Reverb Wet", ReverbWetSlider),
-    ReverbDrySliderAttachment(processorRef.getApvts(), "Reverb Dry", ReverbDrySlider),
-    ReverbWidthSliderAttachment(processorRef.getApvts(), "Reverb Width", ReverbWidthSlider),
-    PluginDryWetSliderAttachment(processorRef.getApvts(), "Plugin Dry Wet", PluginDryWetSlider),
-    delayComponent(processorRef.getApvts())
+    delayComponent(processorRef.getApvts()),
+    reverbComponent(processorRef.getApvts())
 {
     juce::ignoreUnused (processorRef);
 
-    setLookAndFeel(new CustomLookNFeel);
+    setLookAndFeel(&customLook);
 
     #if DEBUG
     addAndMakeVisible (inspectButton);
@@ -33,11 +28,8 @@ PluginEditor::PluginEditor (PluginProcessor& p)
     };
     #endif
 
-       // Display our sliders
-    for (auto* component : getAllSliders())
-        addAndMakeVisible (component);
-
     addAndMakeVisible(delayComponent);    
+    addAndMakeVisible(reverbComponent);    
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -67,8 +59,7 @@ void PluginEditor::resized()
 {
     // layout the positions of your child components here
     auto area = getLocalBounds();
-    auto sliders = getAllSliders();
-    
+
     #if DEBUG
     area.removeFromBottom (50);
     inspectButton.setBounds (getLocalBounds().withSizeKeepingCentre (100, 50));
@@ -80,6 +71,8 @@ void PluginEditor::resized()
     using Track = juce::Grid::TrackInfo;
     using Fr = juce::Grid::Fr;
 
+    grid.setGap(juce::Grid::Px(10));
+
     grid.templateRows    = { 
                              Track (Fr (1)), // to center everything
                              Track (Fr (2)), // Deeeeee
@@ -90,7 +83,7 @@ void PluginEditor::resized()
     
     grid.templateColumns = { 
                              Track (Fr (1)), // to center everything
-                             Track (Fr (6)), //Main Content
+                             Track (Fr (6)), // Main Content
                              Track (Fr (4)), // Main Content
                              Track (Fr (6)), // Main Content
                              Track (Fr (1)) 
@@ -101,40 +94,9 @@ void PluginEditor::resized()
 
 
     grid.items.set(11, juce::GridItem(delayComponent));
+    grid.items.set(16, juce::GridItem(reverbComponent));
 
     grid.performLayout (getLocalBounds());
 
 
 }   
-
-std::vector<juce::Component*> PluginEditor::getReverbSliders()
-{
-    // Very convenient way of returning a std::vector.
-    return {
-        &ReverbDampingSlider,
-        &ReverbRoomSizeSlider,
-        &ReverbWetSlider,
-        &ReverbDrySlider,
-        &ReverbWidthSlider        
-    };
-}
-
-/* std::vector<juce::Component*> PluginEditor::getDelaySliders()
-{
-    return {
-        &DelayTimeSlider,
-        &DelayFeedbackSlider
-    };
-} */
-
-std::vector<juce::Component*> PluginEditor::getAllSliders()
-{
-    return {
-        &ReverbDampingSlider,
-        &ReverbRoomSizeSlider,
-        &ReverbWetSlider,
-        &ReverbDrySlider,
-        &ReverbWidthSlider,
-        &PluginDryWetSlider
-    };
-}
