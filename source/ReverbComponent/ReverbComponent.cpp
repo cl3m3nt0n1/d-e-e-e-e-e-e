@@ -1,7 +1,4 @@
 #include "ReverbComponent.hpp"
-#include "juce_events/juce_events.h"
-#include "juce_graphics/juce_graphics.h"
-#include "juce_gui_basics/juce_gui_basics.h"
 
 ReverbComponent::ReverbComponent(juce::AudioProcessorValueTreeState& audioTree) :
     mbackgroundColour(juce::Colour::fromRGB(225, 90, 151)),
@@ -31,6 +28,7 @@ void ReverbComponent::paint (juce::Graphics& g)
     g.fillAll(mbackgroundColour);
     auto pathStroke = juce::PathStrokeType(6.0f, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded);
     auto area = juce::Path();
+    area.createPathWithRoundedCorners(20);
     area.addRectangle(getLocalBounds());
     g.setColour(juce::Colours::white);
     g.strokePath(area, pathStroke);
@@ -42,20 +40,22 @@ void ReverbComponent::resized()
     using Track = juce::Grid::TrackInfo;
     using Fr = juce::Grid::Fr;
 
+    grid.alignContent = juce::Grid::AlignContent::spaceEvenly;
+    grid.alignItems = juce::Grid::AlignItems::center;
 
     grid.templateRows = { 
         Track (Fr (1)), 
-        Track (Fr (4)), 
-        Track (Fr (4)), 
-        Track (Fr (4)), 
+        Track (Fr (10)), 
+        Track (Fr (10)), 
+        Track (Fr (10)), 
         Track (Fr (1))
         };
         
     grid.templateColumns = { 
         Track (Fr (1)), 
-        Track (Fr (3)), 
-        Track (Fr (1)), 
-        Track (Fr (3)), 
+        Track (Fr (50)), 
+        Track (Fr (10)), 
+        Track (Fr (50)), 
         Track (Fr (1))
     };
 

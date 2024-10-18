@@ -1,4 +1,3 @@
-#include "../CustomLookNFeel/CustomLookNFeel.h"
 #include "juce_audio_processors/juce_audio_processors.h"
 #include "juce_core/juce_core.h"
 #include "juce_core/system/juce_PlatformDefs.h"
@@ -19,7 +18,7 @@ public:
     SliderAndLabel(juce::String sliderLabel) :slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
                       juce::Slider::TextEntryBoxPosition::NoTextBox)
     {
-        juce::FontOptions fontOptions("JetBrainsMono Nerd Font", "Bold", 18.0f);
+        juce::FontOptions fontOptions("JetBrainsMono Nerd Font", "Bold", 20.0f);
         
         label.setFont(fontOptions);
         label.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
@@ -33,6 +32,23 @@ public:
     void paint(juce::Graphics& g) override
     {
 
+        juce::Path glyphPath;
+        juce::GlyphArrangement glyphs;
+        glyphs.addFittedText(label.getFont(), label.getText(), 
+                             label.getBoundsInParent().getTopLeft().x, 
+                             label.getBoundsInParent().getTopLeft().y, 
+                             label.getBoundsInParent().getWidth(), 
+                             label.getBoundsInParent().getHeight(), 
+                             juce::Justification::centredTop, 5);
+        glyphs.createPath(glyphPath);
+        
+        g.setColour(juce::Colours::white);
+        juce::PathStrokeType strokeType(4.0f);
+        g.strokePath(glyphPath, strokeType);
+        g.fillPath(glyphPath);
+        juce::DropShadow shadow;
+        shadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
+        shadow.drawForPath(g, glyphPath);
     }
 
     void resized() override
@@ -90,6 +106,23 @@ public:
     void paint(juce::Graphics& g) override
     {
 
+        juce::Path glyphPath;
+        juce::GlyphArrangement glyphs;
+        glyphs.addFittedText(label.getFont(), label.getText(), 
+                             label.getBoundsInParent().getTopLeft().x, 
+                             label.getBoundsInParent().getTopLeft().y, 
+                             label.getBoundsInParent().getWidth(), 
+                             label.getBoundsInParent().getHeight(), 
+                             juce::Justification::centredTop, 5);
+        glyphs.createPath(glyphPath);
+        
+        g.setColour(juce::Colours::white);
+        juce::PathStrokeType strokeType(4.0f);
+        g.strokePath(glyphPath, strokeType);
+        g.fillPath(glyphPath);
+        juce::DropShadow shadow;
+        shadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
+        shadow.drawForPath(g, glyphPath);
     }
 
     void resized() override

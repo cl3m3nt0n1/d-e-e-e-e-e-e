@@ -1,7 +1,4 @@
 #include "DelayComponent.hpp"
-#include "juce_events/juce_events.h"
-#include "juce_graphics/juce_graphics.h"
-#include "juce_gui_basics/juce_gui_basics.h"
 
 DelayComponent::DelayComponent(juce::AudioProcessorValueTreeState& audioTree) :
     mbackgroundColour(juce::Colour::fromRGB(50, 222, 138)),

@@ -4,7 +4,8 @@
 PluginEditor::PluginEditor (PluginProcessor& p)
     : AudioProcessorEditor (&p), processorRef (p),
     delayComponent(processorRef.getApvts()),
-    reverbComponent(processorRef.getApvts())
+    reverbComponent(processorRef.getApvts()),
+    mPluginDryWetSliderAttachement(processorRef.getApvts(), "Plugin Dry Wet", mPluginDryWetSlider.getslider())
 {
     juce::ignoreUnused (processorRef);
 
@@ -26,7 +27,8 @@ PluginEditor::PluginEditor (PluginProcessor& p)
     #endif
 
     addAndMakeVisible(delayComponent);    
-    addAndMakeVisible(reverbComponent);    
+    addAndMakeVisible(reverbComponent);   
+    addAndMakeVisible(mPluginDryWetSlider); 
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -65,12 +67,8 @@ void PluginEditor::paint (juce::Graphics& g)
 
 void PluginEditor::resized()
 {
-    // layout the positions of your child components here
-    auto area = getLocalBounds();
-
     #if DEBUG
-    area.removeFromBottom (50);
-    inspectButton.setBounds (getLocalBounds().withSizeKeepingCentre (100, 50));
+    inspectButton.setBounds (0, 0, 50, 25);
     #endif
 
 
@@ -103,6 +101,8 @@ void PluginEditor::resized()
 
     grid.items.set(11, juce::GridItem(delayComponent));
     grid.items.set(16, juce::GridItem(reverbComponent));
+    grid.items.set(17, juce::GridItem(mPluginDryWetSlider));
+
 
     grid.performLayout (getLocalBounds());
 

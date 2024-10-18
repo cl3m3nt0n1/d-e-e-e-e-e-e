@@ -32,12 +32,13 @@ private:
     
     #if DEBUG
     std::unique_ptr<melatonin::Inspector> inspector;
-    juce::TextButton inspectButton { "Inspect the UI" };
+    juce::TextButton inspectButton { "Inspect" };
     #endif
 
     DelayComponent delayComponent;
     ReverbComponent reverbComponent;
-    
+    SliderAndLabel mPluginDryWetSlider {"DRY | WET"};
+    juce::AudioProcessorValueTreeState::SliderAttachment mPluginDryWetSliderAttachement;
     
 
 
