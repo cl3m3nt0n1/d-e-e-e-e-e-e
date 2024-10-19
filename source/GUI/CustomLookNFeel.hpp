@@ -32,7 +32,7 @@ public:
         juce::Path p;
         auto pointerLength = radius * log(1.3);
         auto pointerThickness = 3.0f;
-        p.addRectangle(-pointerLength * 0.3f, -radius, pointerThickness, pointerLength);
+        p.addRectangle(-radius * 0.2f, -radius, pointerThickness, pointerLength);
         p.applyTransform (juce::AffineTransform::rotation (angle).translated (centreX, centreY));
         g.setColour (juce::Colours::white);
         g.fillPath (p);

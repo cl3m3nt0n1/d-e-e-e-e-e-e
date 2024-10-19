@@ -40,7 +40,5 @@ private:
     SliderAndLabel mPluginDryWetSlider {"DRY | WET"};
     juce::AudioProcessorValueTreeState::SliderAttachment mPluginDryWetSliderAttachement;
     
-
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginEditor)
 };

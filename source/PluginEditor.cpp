@@ -1,4 +1,5 @@
 #include "PluginEditor.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 PluginEditor::PluginEditor (PluginProcessor& p)
     : AudioProcessorEditor (&p), processorRef (p),
@@ -52,7 +53,7 @@ void PluginEditor::paint (juce::Graphics& g)
     
     firstTriangle.addTriangle (area.getBottomLeft().toFloat(), area.getTopLeft().toFloat(), area.getTopRight().toFloat());
     secondTriangle.addTriangle (area.getBottomRight().toFloat(), area.getBottomLeft().toFloat(), area.getTopRight().toFloat());
-    
+
     g.setColour(juce::Colour::fromRGB(225, 90, 151));
     g.fillPath (firstTriangle);
     g.setColour(juce::Colours::white);
@@ -72,7 +73,7 @@ void PluginEditor::paint (juce::Graphics& g)
                                            delayComponent.getBounds().getY(), 
                                            delayComponent.getBounds().getWidth()  + 3, 
                                            delayComponent.getBounds().getHeight() + 3, 
-                                           3.0f);
+                                           2.0f);
     g.setColour(juce::Colours::white);
     g.strokePath(delayComponentPath, componentStroke);
    /*  juce::DropShadow delayShadow;
@@ -88,7 +89,7 @@ void PluginEditor::paint (juce::Graphics& g)
                                             reverbComponent.getBounds().getY(), 
                                             reverbComponent.getBounds().getWidth()  + 3, 
                                             reverbComponent.getBounds().getHeight() + 3, 
-                                            3.0f);
+                                            2.0f);
     g.setColour(juce::Colours::white);
     g.strokePath(reverbComponentPath, componentStroke);
 /*     juce::DropShadow reverbShadow;
@@ -100,7 +101,7 @@ void PluginEditor::paint (juce::Graphics& g)
      * Dry/Wet contour and drop shadow 
      */
     auto dryWetPath = juce::Path();
-    dryWetPath.addRoundedRectangle(mPluginDryWetSlider.getBounds(), 3.0f);
+    dryWetPath.addRoundedRectangle(mPluginDryWetSlider.getBounds(), 2.0f);
     g.setColour(juce::Colours::white);
     g.strokePath(dryWetPath, componentStroke);
     /* juce::DropShadow dryWetShadow;
@@ -121,19 +122,20 @@ void PluginEditor::resized()
     using Track = juce::Grid::TrackInfo;
     using Fr = juce::Grid::Fr;
 
-    grid.setGap(juce::Grid::Px(30));
+    grid.columnGap = juce::Grid::Px(40);
+    grid.rowGap    = juce::Grid::Px(20);
 
     grid.templateRows    = { 
                              Track (Fr (0)), // to center everything
                              Track (Fr (2)), // Deeeeee
-                             Track (Fr (6)), // Main Content
+                             Track (Fr (5)), // Main Content
                              Track (Fr (10)), // Main Content
                              Track (Fr (0))
                              }; // to center everything
     
     grid.templateColumns = { 
                              Track (Fr (0)), // to center everything
-                             Track (Fr (40)), // Main Content
+                             Track (Fr (30)), // Main Content
                              Track (Fr (20)), // Main Content
                              Track (Fr (30)), // Main Content
                              Track (Fr (0)) 
@@ -141,7 +143,6 @@ void PluginEditor::resized()
 
     for (int i = 0; i < 25; ++i)
         grid.items.set(i, juce::GridItem(nullptr));
-
 
     grid.items.set(11, juce::GridItem(delayComponent));
     grid.items.set(16, juce::GridItem(reverbComponent));

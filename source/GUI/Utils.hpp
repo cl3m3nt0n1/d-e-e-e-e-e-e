@@ -27,7 +27,7 @@ public:
                              label.getBoundsInParent().getTopLeft().y, 
                              label.getBoundsInParent().getWidth(), 
                              label.getBoundsInParent().getHeight(), 
-                             juce::Justification::centredTop, 10);
+                             juce::Justification::centredTop, 1);
         glyphs.createPath(glyphPath);
         
         g.setColour(juce::Colours::white);
