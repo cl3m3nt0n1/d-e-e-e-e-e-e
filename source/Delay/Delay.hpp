@@ -2,6 +2,7 @@
 #define DELAY_HPP
 
 #include "juce_audio_processors/juce_audio_processors.h"
+#include "juce_core/juce_core.h"
 #include "juce_dsp/juce_dsp.h"
 #include <juce_audio_basics/juce_audio_basics.h>
 
@@ -76,14 +77,26 @@ public:
 
     int mWritePosition = 0;
 
+
 private:
     juce::AudioBuffer<float> mDelayBuffer;
     juce::AudioProcessorValueTreeState& apvts;
+
     juce::AudioParameterInt* mDelayTimeParameter = nullptr;
     juce::AudioParameterFloat* mDelayFeedbackParameter = nullptr;
-    // juce::AudioParameterBool* mDelaySyncParameter = nullptr;
+    juce::AudioParameterBool* mDelaySyncToggleParameter = nullptr;
+    juce::AudioParameterChoice* mDelaySyncParameter = nullptr;
+
+    
+    juce::Array<int> mDelaySyncChoicesLUT = {64, 48, 32,
+                                             24, 16, 12,
+                                             8,  6,  4,
+                                             2,  1};
+
+    juce::AudioPlayHead::PositionInfo positionInfo;
     
     int mSampleRate = 44100;
+    int mCurrentBPM = 120.0;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Delay)

@@ -1,16 +1,20 @@
 #include "Delay.hpp"
-#include "juce_audio_basics/juce_audio_basics.h"
 #include "juce_audio_processors/juce_audio_processors.h"
-#include "juce_core/juce_core.h"
-#include "juce_dsp/juce_dsp.h"
+#include "juce_core/system/juce_PlatformDefs.h"
 #include <memory>
 
 Delay::Delay(juce::AudioProcessorValueTreeState& valueTree) : apvts(valueTree),
 mDelayTimeParameter(dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("Delay Time"))),
-mDelayFeedbackParameter(dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Delay Feedback")))
-// mDelaySyncParameter(dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("Delay Sync")))
+mDelayFeedbackParameter(dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Delay Feedback"))),
+mDelaySyncToggleParameter(dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("Delay Sync Toggle"))),
+mDelaySyncParameter(dynamic_cast<juce::AudioParameterChoice*>(apvts.getParameter("Delay Sync")))
 {
-
+    // TODO: this value is stored only on object creation.
+    // BPM may get to change over time so may add a listener of some sort.
+    auto temp = positionInfo.getBpm();
+    if(temp.hasValue())
+        if(*temp < 400 && *temp > 10)
+            mCurrentBPM = static_cast<int>(*temp);
 }
 
 void Delay::setSampleRate(int rate)
@@ -88,8 +92,14 @@ void Delay::getFromDelayBuffer (juce::AudioBuffer<float>& buffer, int channel, c
     int readPosition = 0;
     // The index from where we want to read data
     // mSampleRate * (delayTime / 1000) -> conversion to an index of the delayTime in milliseconds
-    readPosition = static_cast<int> (delayBufferLength + mWritePosition - (mSampleRate * delayTime / 1000)) % delayBufferLength;
-        
+
+    if(mDelaySyncToggleParameter->get()) // if user wants to sync to tempo
+    {
+        readPosition = static_cast<int>(delayBufferLength + mWritePosition - ((mSampleRate * (1000 * 60 / mCurrentBPM) / mDelaySyncChoicesLUT[mDelaySyncParameter->getIndex()]) / 1000)) % delayBufferLength;
+    } 
+    else
+        readPosition = static_cast<int> (delayBufferLength + mWritePosition - (mSampleRate * delayTime / 1000)) % delayBufferLength;
+    
     
     // if we're in range
     if (bufferLength + readPosition < delayBufferLength)
@@ -135,5 +145,13 @@ void Delay::AppendToParameterLayout (juce::AudioProcessorValueTreeState::Paramet
     
     layout.add(std::make_unique<juce::AudioParameterInt>("Delay Time", "Delay Time", 1, 2000, 500));
 
-    // layout.add(std::make_unique<juce::AudioParameterBool>("Delay Sync", "Delay Sync", false));
+    layout.add(std::make_unique<juce::AudioParameterBool>("Delay Sync Toggle", "Delay Sync Toggle", false));
+
+
+    juce::StringArray choices = {"1:64", "1:48", "1:32",
+                                 "1:24", "1:16", "1:12", 
+                                 "1:8" , "1:6" , "1:4", 
+                                 "1:2" , "1:1"};
+
+    layout.add(std::make_unique<juce::AudioParameterChoice>("Delay Sync", "Delay Sync", choices, 0));
 }
