@@ -146,6 +146,12 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 {
     juce::ignoreUnused (midiMessages);
 
+    // Fetching the song's BPM has to be done within processBlock()
+    auto bpm = getPlayHead()->getPosition()->getBpm();
+    if(bpm.hasValue())
+        delay.setBPM(static_cast<int>(*bpm));
+
+
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();

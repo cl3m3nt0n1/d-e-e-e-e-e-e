@@ -9,12 +9,6 @@ mDelayFeedbackParameter(dynamic_cast<juce::AudioParameterFloat*>(apvts.getParame
 mDelaySyncToggleParameter(dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("Delay Sync Toggle"))),
 mDelaySyncParameter(dynamic_cast<juce::AudioParameterChoice*>(apvts.getParameter("Delay Sync")))
 {
-    // TODO: this value is stored only on object creation.
-    // BPM may get to change over time so may add a listener of some sort.
-    auto temp = positionInfo.getBpm();
-    if(temp.hasValue())
-        if(*temp < 400 && *temp > 10)
-            mCurrentBPM = static_cast<int>(*temp);
 }
 
 void Delay::setSampleRate(int rate)
@@ -153,5 +147,5 @@ void Delay::AppendToParameterLayout (juce::AudioProcessorValueTreeState::Paramet
                                  "1:8" , "1:6" , "1:4", 
                                  "1:2" , "1:1"};
 
-    layout.add(std::make_unique<juce::AudioParameterChoice>("Delay Sync", "Delay Sync", choices, 0));
+    layout.add(std::make_unique<juce::AudioParameterChoice>("Delay Sync", "Delay Sync", choices, choices.size() - 1));
 }

@@ -75,6 +75,13 @@ public:
      */
     void AppendToParameterLayout (juce::AudioProcessorValueTreeState::ParameterLayout& layout);
 
+    /**
+     * @brief sets the tempo for the delay. Used within the context of sync.
+     * 
+     * @param BPM the current tempo of the song gotten from the DAW.
+     */
+    void setBPM(int BPM) {mCurrentBPM = BPM; }
+
     int mWritePosition = 0;
 
 
@@ -96,7 +103,7 @@ private:
     juce::AudioPlayHead::PositionInfo positionInfo;
     
     int mSampleRate = 44100;
-    int mCurrentBPM = 120.0;
+    int mCurrentBPM = 120; // is set by setBPM within PluginProcessor::processBlock()
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Delay)
