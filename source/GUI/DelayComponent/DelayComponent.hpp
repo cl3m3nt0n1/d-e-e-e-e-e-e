@@ -24,12 +24,17 @@ private:
     juce::AudioProcessorValueTreeState& apvts;
 
     SliderAndLabel mDelayTimeSlider {"DLY::TIM"}, 
+                   mDelaySyncSlider {"DLY::SYN"}, 
                    mDelayFeedbackSlider {"DLY::FBK"};
+    
+    ToggleAndLabel mDelaySyncToggle {"DLY::SYN"};
 
-    juce::AudioProcessorValueTreeState::SliderAttachment
-        mDelayTimeSliderAttachment,
-        mDelayFeedbackSliderAttachment;
+    juce::AudioProcessorValueTreeState::SliderAttachment mDelayTimeSliderAttachment,
+                                                         mDelayFeedbackSliderAttachment,
+                                                         mDelaySyncSliderAttachment;
 
+    juce::AudioProcessorValueTreeState::ButtonAttachment mDelaySyncToggleAttachment;
+        
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayComponent)
 };

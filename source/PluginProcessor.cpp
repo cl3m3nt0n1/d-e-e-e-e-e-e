@@ -12,13 +12,13 @@ PluginProcessor::PluginProcessor()
 #endif
               ),
       delay (apvts),
-      ReverbDampingParameter(dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Reverb Damping"))),
-      ReverbFreezeParameter(dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("Reverb Freeze"))),
-      ReverbRoomSizeParameter(dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Reverb Room Size"))),
-      ReverbWetParameter(dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Reverb Wet"))),
-      ReverbDryParameter(dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Reverb Dry"))),
-      ReverbWidthParameter(dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Reverb Width"))),
-      mPluginDryWetParameter(dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Plugin Dry Wet")))
+      ReverbDampingParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Reverb Damping"))),
+      ReverbFreezeParameter (dynamic_cast<juce::AudioParameterBool*> (apvts.getParameter ("Reverb Freeze"))),
+      ReverbRoomSizeParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Reverb Room Size"))),
+      ReverbWetParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Reverb Wet"))),
+      ReverbDryParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Reverb Dry"))),
+      ReverbWidthParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Reverb Width"))),
+      mPluginDryWetParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Plugin Dry Wet")))
 {
 }
 
@@ -98,18 +98,18 @@ void PluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     juce::ignoreUnused (sampleRate);
 
     delay.prepare (getTotalNumInputChannels(), static_cast<int> (sampleRate), samplesPerBlock);
-    
+
     juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = getTotalNumInputChannels();
     spec.sampleRate = sampleRate;
 
-    reverb.prepare(spec);
+    reverb.prepare (spec);
     reverb.reset();
-    reverb.setEnabled(true);
+    reverb.setEnabled (true);
 
-    dryWet.prepare(spec);
-    dryWet.setMixingRule(juce::dsp::DryWetMixingRule::balanced);
+    dryWet.prepare (spec);
+    dryWet.setMixingRule (juce::dsp::DryWetMixingRule::balanced);
     dryWet.reset();
 }
 
@@ -148,9 +148,8 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     // Fetching the song's BPM has to be done within processBlock()
     auto bpm = getPlayHead()->getPosition()->getBpm();
-    if(bpm.hasValue())
-        delay.setBPM(static_cast<int>(*bpm));
-
+    if (bpm.hasValue())
+        delay.setBPM (static_cast<int> (*bpm));
 
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels = getTotalNumInputChannels();
@@ -165,9 +164,9 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    juce::dsp::AudioBlock<float> block(buffer);
+    juce::dsp::AudioBlock<float> block (buffer);
 
-    dryWet.pushDrySamples(block);
+    dryWet.pushDrySamples (block);
 
     const auto bufferLength = buffer.getNumSamples();
     const auto delayBufferLength = delay.getDelayBuffer().getNumSamples();
@@ -182,7 +181,6 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         delay.getFromDelayBuffer (buffer, channel, bufferLength);
         // apply feedback
         delay.feedbackDelay (channel, bufferLength, dryBuffer);
-
     }
     /* We read bufferLength values so we need to increment the write position
      * so that, next time, we read once again bufferLength values but don't 
@@ -191,17 +189,17 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     delay.mWritePosition += bufferLength;
     delay.mWritePosition %= delayBufferLength; // wrap around
 
-    reverb.setParameters(dumpParametersFromAPVTS());
+    reverb.setParameters (dumpParametersFromAPVTS());
 
-    juce::dsp::ProcessContextReplacing<float> context(block);
-    reverb.process(context);
+    juce::dsp::ProcessContextReplacing<float> context (block);
+    reverb.process (context);
 
     /*  
         // TODO: Use process function
         delay.process(context); 
     */
-    dryWet.mixWetSamples(block);
-    dryWet.setWetMixProportion(mPluginDryWetParameter->get());
+    dryWet.mixWetSamples (block);
+    dryWet.setWetMixProportion (mPluginDryWetParameter->get());
 }
 
 //==============================================================================
@@ -212,8 +210,8 @@ bool PluginProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* PluginProcessor::createEditor()
 {
-    // return new PluginEditor (*this);
-    return new juce::GenericAudioProcessorEditor (*this);
+    return new PluginEditor (*this);
+    // return new juce::GenericAudioProcessorEditor (*this);
 }
 
 //==============================================================================
@@ -238,28 +236,22 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::CreateParam
 
     // Delay Parameters
     delay.AppendToParameterLayout (layout);
-  
-    // Reverb Parameters
-    layout.add(std::make_unique<juce::AudioParameterFloat>("Reverb Damping", "Reverb Damping",
-    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.1f));  
-    
-    layout.add(std::make_unique<juce::AudioParameterBool>("Reverb Freeze", "Reverb Freeze", false));  
-    
-    layout.add(std::make_unique<juce::AudioParameterFloat>("Reverb Room Size", "Reverb Room Size",
-    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.2f));  
-    
-    layout.add(std::make_unique<juce::AudioParameterFloat>("Reverb Wet", "Reverb Wet",
-    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.5f));  
-    
-    layout.add(std::make_unique<juce::AudioParameterFloat>("Reverb Dry", "Reverb Dry",
-    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.2f));
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>("Reverb Width", "Reverb Width",
-    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.f),0.2f));
+    // Reverb Parameters
+    layout.add (std::make_unique<juce::AudioParameterFloat> ("Reverb Damping", "Reverb Damping", juce::NormalisableRange<float> (0.0f, 1.0f, 0.01f, 1.f), 0.1f));
+
+    layout.add (std::make_unique<juce::AudioParameterBool> ("Reverb Freeze", "Reverb Freeze", false));
+
+    layout.add (std::make_unique<juce::AudioParameterFloat> ("Reverb Room Size", "Reverb Room Size", juce::NormalisableRange<float> (0.0f, 1.0f, 0.01f, 1.f), 0.2f));
+
+    layout.add (std::make_unique<juce::AudioParameterFloat> ("Reverb Wet", "Reverb Wet", juce::NormalisableRange<float> (0.0f, 1.0f, 0.01f, 1.f), 0.5f));
+
+    layout.add (std::make_unique<juce::AudioParameterFloat> ("Reverb Dry", "Reverb Dry", juce::NormalisableRange<float> (0.0f, 1.0f, 0.01f, 1.f), 0.2f));
+
+    layout.add (std::make_unique<juce::AudioParameterFloat> ("Reverb Width", "Reverb Width", juce::NormalisableRange<float> (0.0f, 1.0f, 0.01f, 1.f), 0.2f));
 
     //Plugin Parameters
-    layout.add(std::make_unique<juce::AudioParameterFloat>("Plugin Dry Wet", "Plugin Dry Wet", 
-    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f),0.8f));
+    layout.add (std::make_unique<juce::AudioParameterFloat> ("Plugin Dry Wet", "Plugin Dry Wet", juce::NormalisableRange<float> (0.0f, 1.0f, 0.01f), 0.8f));
 
     return layout;
 }
@@ -268,7 +260,7 @@ juce::dsp::Reverb::Parameters PluginProcessor::dumpParametersFromAPVTS()
 {
     juce::dsp::Reverb::Parameters tempParams;
     tempParams.damping = ReverbDampingParameter->get();
-    tempParams.freezeMode = static_cast<float>(ReverbFreezeParameter->get());
+    tempParams.freezeMode = static_cast<float> (ReverbFreezeParameter->get());
     tempParams.roomSize = ReverbRoomSizeParameter->get();
     tempParams.wetLevel = ReverbWetParameter->get();
     tempParams.dryLevel = ReverbDryParameter->get();

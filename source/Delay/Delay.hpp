@@ -95,16 +95,12 @@ private:
     juce::AudioParameterChoice* mDelaySyncParameter = nullptr;
 
     
-    juce::Array<int> mDelaySyncChoicesLUT = {64, 48, 32,
-                                             24, 16, 12,
+    juce::Array<int> mDelaySyncChoicesLUT = {16, 12,
                                              8,  6,  4,
-                                             2,  1};
-
-    juce::AudioPlayHead::PositionInfo positionInfo;
+                                             3,  2,  1};
     
     int mSampleRate = 44100;
     int mCurrentBPM = 120; // is set by setBPM within PluginProcessor::processBlock()
-
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Delay)
 };

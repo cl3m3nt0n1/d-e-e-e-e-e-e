@@ -33,23 +33,22 @@ private:
     juce::AudioProcessorValueTreeState& apvts;
 
     // Reverb sliders and everything related
-    SliderAndLabel mReverbDampingSlider  {"REV::DMP"}, 
-                   mReverbRoomSizeSlider {"REV::RSZ"},
-                   mReverbWetSlider      {"REV::WET"}, 
-                   mReverbDrySlider      {"REV::DRY"},
-                   mReverbWidthSlider    {"REV::WID"};
+    SliderAndLabel mReverbDampingSlider { "REV::DMP" },
+                   mReverbRoomSizeSlider { "REV::RSZ" },
+                   mReverbWetSlider { "REV::WET" },
+                   mReverbDrySlider { "REV::DRY" },
+                   mReverbWidthSlider { "REV::WID" };
 
-    juce::AudioProcessorValueTreeState::SliderAttachment
-                mReverbDampingSliderAttachement,
-                mReverbRoomSizeSliderAttachement,
-                mReverbWetSliderAttachement, 
-                mReverbDrySliderAttachement,
-                mReverbWidthSliderAttachement;
+    juce::AudioProcessorValueTreeState::SliderAttachment mReverbDampingSliderAttachement,
+                                                         mReverbRoomSizeSliderAttachement,
+                                                         mReverbWetSliderAttachement,
+                                                         mReverbDrySliderAttachement,
+                                                         mReverbWidthSliderAttachement;
 
     // Reverb Freeze Toggle and everything related
-    ToggleAndLabel mReverbFreezeToggle {"REV::FRZ"};
+    ToggleAndLabel mReverbFreezeToggle { "REV::FRZ" };
     juce::AudioProcessorValueTreeState::ButtonAttachment
-                mReverbFreezeToggleAttachement;
+        mReverbFreezeToggleAttachement;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ReverbComponent)
 };
