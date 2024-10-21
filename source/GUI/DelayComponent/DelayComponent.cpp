@@ -1,12 +1,13 @@
 #include "DelayComponent.hpp"
 #include "juce_graphics/juce_graphics.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 DelayComponent::DelayComponent (juce::AudioProcessorValueTreeState& audioTree) : mbackgroundColour (juce::Colour::fromRGB (50, 222, 138)),
                                                                                  apvts (audioTree),
                                                                                  mDelayTimeSliderAttachment (apvts, "Delay Time", mDelayTimeSlider.getslider()),
                                                                                  mDelayFeedbackSliderAttachment (apvts, "Delay Feedback", mDelayFeedbackSlider.getslider()),
                                                                                  mDelaySyncSliderAttachment (apvts, "Delay Sync", mDelaySyncSlider.getslider()),
-                                                                                 mDelaySyncToggleAttachment(apvts, "Delay Sync Toggle", mDelaySyncToggle.getToggle())
+                                                                                 mDelaySyncToggleAttachment (apvts, "Delay Sync Toggle", mDelaySyncToggle.getToggle())
 {
     addAndMakeVisible (mDelayFeedbackSlider);
     addAndMakeVisible (mDelayTimeSlider);
@@ -25,7 +26,7 @@ void DelayComponent::paint (juce::Graphics& g)
     auto pathStroke = juce::PathStrokeType (6.0f, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded);
     auto area = juce::Path();
 
-/* 
+    /* 
     area.addRoundedRectangle(getLocalBounds(), 10.0f);
     g.setColour(juce::Colours::white);
     g.strokePath(area, pathStroke);
