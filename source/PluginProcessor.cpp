@@ -1,6 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "juce_core/juce_core.h"
+#include "juce_dsp/juce_dsp.h"
 
 //==============================================================================
 PluginProcessor::PluginProcessor()
@@ -98,12 +99,14 @@ void PluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     juce::ignoreUnused (samplesPerBlock);
     juce::ignoreUnused (sampleRate);
 
-    delay.prepare (getTotalNumInputChannels(), static_cast<int> (sampleRate), samplesPerBlock);
+    // delay.prepare (getTotalNumInputChannels(), static_cast<int> (sampleRate), samplesPerBlock);
 
     juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = getTotalNumInputChannels();
     spec.sampleRate = sampleRate;
+
+    delay.prepare(spec);
 
     reverb.prepare (spec);
     reverb.reset();
@@ -166,6 +169,8 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         buffer.clear (i, 0, buffer.getNumSamples());
 
     juce::dsp::AudioBlock<float> block (buffer);
+    juce::dsp::ProcessContextReplacing<float> context(block);
+
 
     dryWet.pushDrySamples (block);
 
@@ -190,9 +195,9 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     delay.mWritePosition += bufferLength;
     delay.mWritePosition %= delayBufferLength; // wrap around
 
-    reverb.setParameters (dumpParametersFromAPVTS());
+    // delay.process(context);
 
-    juce::dsp::ProcessContextReplacing<float> context (block);
+    reverb.setParameters (dumpParametersFromAPVTS());
     reverb.process (context);
 
     /*  

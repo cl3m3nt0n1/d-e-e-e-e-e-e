@@ -25,13 +25,20 @@ public:
      * @param sampleRate the current sample rate
      * @param samplesPerBlock the number of samples per block of audio
      */
-    void prepare(int numInputChannels, int sampleRate, int samplesPerBlock);
+    void prepare(int numInputChannels, double sampleRate, int samplesPerBlock);
+
+    /**
+     * @brief To be called inside the PluginProcessor::prepareToPlay method
+     * 
+     * @param specs the juce::dsp::ProcessSpec related to this processor.
+     */
+    void prepare(const juce::dsp::ProcessSpec& specs);
 
     /**
      * @brief To be called within PluginProcessor::processBlock method
-     *        /!\ (NOT WORKING YET) /!\ 
+     *        /!\ (STILL NOT WORKING YET) /!\ 
      */
-    void process(juce::dsp::ProcessContextReplacing<float> context);
+    void process(juce::dsp::ProcessContextReplacing<float>& context);
 
     /**
      * @brief the read operation of a DDL. Reads the content of the AudioBuffer
@@ -59,7 +66,7 @@ public:
      * @param bufferLength the length of the main buffer
      * @param dryBuffer a writePointer to the main buffer
      */
-    void feedbackDelay (int channel, const int bufferLength, float* dryBuffer);
+    void feedbackDelay (int channel, const int bufferLength, const float* dryBuffer);
 
     /**
      * @brief Get the Delay Buffer 
@@ -86,13 +93,15 @@ public:
 
 
 private:
-    juce::AudioBuffer<float> mDelayBuffer;
+    juce::AudioBuffer<float> mDelayBuffer, tempBuffer;
     juce::AudioProcessorValueTreeState& apvts;
 
     juce::AudioParameterInt* mDelayTimeParameter = nullptr;
     juce::AudioParameterFloat* mDelayFeedbackParameter = nullptr;
     juce::AudioParameterBool* mDelaySyncToggleParameter = nullptr;
     juce::AudioParameterChoice* mDelaySyncParameter = nullptr;
+
+    juce::dsp::IIR::Filter<float> filter;
 
     
     juce::Array<int> mDelaySyncChoicesLUT = {16, 12,

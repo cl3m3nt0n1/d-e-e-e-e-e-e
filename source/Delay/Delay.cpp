@@ -16,33 +16,37 @@ void Delay::setSampleRate (int rate)
     mSampleRate = rate;
 }
 
-void Delay::prepare (int numInputChannels, int sampleRate, int samplesPerBlock)
+void Delay::prepare (int numInputChannels, double sampleRate, int samplesPerBlock)
 {
-    mSampleRate = sampleRate;
-    const auto bufferSize = 2 * (sampleRate + samplesPerBlock);
+    mSampleRate = static_cast<int>(sampleRate);
+    const auto bufferSize = 2 * (mSampleRate + samplesPerBlock);
 
     mDelayBuffer.setSize (numInputChannels, bufferSize);
     mDelayBuffer.clear();
 }
 
-void Delay::process (juce::dsp::ProcessContextReplacing<float> context)
+void Delay::prepare(const juce::dsp::ProcessSpec& specs)
 {
-    auto block = context.getInputBlock();
-    auto numChannels = block.getNumChannels();
+    // inner call to prepare() with specs' params.
+    prepare(specs.numChannels, specs.sampleRate, specs.maximumBlockSize);
 
-    // TODO: DON'T ALLOCATE IN PROCESS!
-    // THIS IS A TEMPORARY SOLUTION.
-    juce::AudioBuffer<float> tempBuffer;
-    const auto numSamples = block.getNumSamples();
-    tempBuffer.setSize (numChannels, numSamples);
+    tempBuffer.setSize(specs.numChannels, specs.maximumBlockSize);
+}
+
+
+void Delay::process (juce::dsp::ProcessContextReplacing<float>& context)
+{
+    auto&& block = context.getInputBlock();
+    auto numChannels = block.getNumChannels();
     auto bufferLength = tempBuffer.getNumSamples();
 
-    block.copyTo (tempBuffer);
 
     for (int channel = 0; channel < numChannels; ++channel)
     {
-        const auto* bufferData = tempBuffer.getReadPointer (channel);
+        auto* bufferData = block.getChannelPointer (channel);
+        tempBuffer.copyFrom(channel, 0, bufferData, block.getNumSamples());
         auto dryBuffer = tempBuffer.getWritePointer (channel);
+
         // read the values from buffer and store them in delayBuffer.
         fillDelayBuffer (channel, bufferLength, bufferData);
         // read the values from the delayBuffer and write them to the audio buffer.
@@ -101,7 +105,7 @@ void Delay::getFromDelayBuffer (juce::AudioBuffer<float>& buffer, int channel, c
     }
 }
 
-void Delay::feedbackDelay (int channel, const int bufferLength, float* dryBuffer)
+void Delay::feedbackDelay (int channel, const int bufferLength, const float* dryBuffer)
 {
     const auto delayBufferLength = mDelayBuffer.getNumSamples();
 
