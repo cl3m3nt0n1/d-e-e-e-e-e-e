@@ -25,11 +25,11 @@ void DelayComponent::paint (juce::Graphics& g)
     auto pathStroke = juce::PathStrokeType (6.0f, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded);
     auto area = juce::Path();
 
-    /* 
+/* 
     area.addRoundedRectangle(getLocalBounds(), 10.0f);
     g.setColour(juce::Colours::white);
     g.strokePath(area, pathStroke);
-*/
+ */
 }
 
 void DelayComponent::resized()
