@@ -1,11 +1,14 @@
 #include "PluginEditor.h"
+#include "juce_events/juce_events.h"
+#include "juce_graphics/juce_graphics.h"
 #include "juce_gui_basics/juce_gui_basics.h"
 
 PluginEditor::PluginEditor (PluginProcessor& p)
     : AudioProcessorEditor (&p), processorRef (p),
     delayComponent(processorRef.getApvts()),
     reverbComponent(processorRef.getApvts()),
-    mPluginDryWetSliderAttachement(processorRef.getApvts(), "Plugin Dry Wet", mPluginDryWetSlider.getslider())
+    mPluginDryWetSliderAttachement(processorRef.getApvts(), "Plugin Dry Wet", mPluginDryWetSlider.getslider()),
+    mPluginOutputLevelAttachement(processorRef.getApvts(), "Output Level", mPluginOutputLevel.getslider())
 {
     juce::ignoreUnused (processorRef);
 
@@ -26,9 +29,16 @@ PluginEditor::PluginEditor (PluginProcessor& p)
     };
     #endif
 
+    juce::FontOptions options("JetBrainsMono Nerd Font", "Regular", 40);
+    pluginName.setFont(juce::Font(options));
+    pluginName.setText("Deeeeee", juce::NotificationType::dontSendNotification);
+    pluginName.setJustificationType(juce::Justification::centred);
+
+    addAndMakeVisible(pluginName);
     addAndMakeVisible(delayComponent);    
     addAndMakeVisible(reverbComponent);   
     addAndMakeVisible(mPluginDryWetSlider); 
+    addAndMakeVisible(mPluginOutputLevel); 
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -116,6 +126,13 @@ void PluginEditor::resized()
     inspectButton.setBounds (0, 0, 50, 25);
     #endif
 
+    auto area = getBounds();
+    area.removeFromTop(25);
+    area.removeFromBottom(7 * getHeight() / 8);
+    
+    pluginName.setBounds(area);
+
+    
 
     juce::Grid grid;
 
@@ -127,7 +144,6 @@ void PluginEditor::resized()
 
     grid.templateRows    = { 
                              Track (Fr (0)), // to center everything
-                             Track (Fr (2)), // Deeeeee
                              Track (Fr (5)), // Main Content
                              Track (Fr (10)), // Main Content
                              Track (Fr (0))
@@ -137,19 +153,21 @@ void PluginEditor::resized()
                              Track (Fr (0)), // to center everything
                              Track (Fr (30)), // Main Content
                              Track (Fr (20)), // Main Content
-                             Track (Fr (30)), // Main Content
+                             Track (Fr (20)), // Main Content
                              Track (Fr (0)) 
                             }; // to center everything 
 
-    for (int i = 0; i < 25; ++i)
+    for (int i = 0; i < 20; ++i)
         grid.items.set(i, juce::GridItem(nullptr));
 
-    grid.items.set(11, juce::GridItem(delayComponent));
-    grid.items.set(16, juce::GridItem(reverbComponent));
-    grid.items.set(17, juce::GridItem(mPluginDryWetSlider));
+    grid.items.set(6, juce::GridItem(delayComponent));
+    grid.items.set(11, juce::GridItem(reverbComponent));
+    grid.items.set(12, juce::GridItem(mPluginDryWetSlider));
+    grid.items.set(8, juce::GridItem(mPluginOutputLevel));
 
-
-    grid.performLayout (getLocalBounds());
+    auto gridArea = getBounds();
+    gridArea.removeFromTop(50);
+    grid.performLayout (gridArea);
 
 
 }   

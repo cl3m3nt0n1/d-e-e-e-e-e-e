@@ -35,10 +35,14 @@ private:
     juce::TextButton inspectButton { "Inspect" };
     #endif
 
+    juce::Label pluginName;
+
     DelayComponent delayComponent;
     ReverbComponent reverbComponent;
-    SliderAndLabel mPluginDryWetSlider {"DRY | WET"};
-    juce::AudioProcessorValueTreeState::SliderAttachment mPluginDryWetSliderAttachement;
+    SliderAndLabel mPluginDryWetSlider {"DRY | WET"},
+                   mPluginOutputLevel  {"OUT::LVL" };
+    juce::AudioProcessorValueTreeState::SliderAttachment mPluginDryWetSliderAttachement,
+                                                         mPluginOutputLevelAttachement;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginEditor)
 };
