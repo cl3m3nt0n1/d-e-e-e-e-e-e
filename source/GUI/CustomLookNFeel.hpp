@@ -1,5 +1,6 @@
 #pragma once
 
+#include "juce_core/juce_core.h"
 #include "juce_graphics/juce_graphics.h"
 #include <cmath>
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -53,6 +54,11 @@ public:
             button.getLocalBounds().getBottomRight().y - button.getLocalBounds().getHeight() / 3);
 
         juce::Rectangle<float> outerToggleRectangle (topLeftOuterRectanglePoint, bottomRightOuterRectanglePoint);
+        juce::Rectangle<float> outerToggleRectangleOutline(outerToggleRectangle);
+        outerToggleRectangleOutline.expand(5, 5);
+                
+        g.setColour(juce::Colour::fromRGBA(0, 0, 0, 20));
+        g.drawRoundedRectangle(outerToggleRectangleOutline.withTrimmedLeft(5).withTrimmedTop(5), 7, 6);
 
         g.setColour (juce::Colours::white);
         g.drawRoundedRectangle (outerToggleRectangle, 7, 10);

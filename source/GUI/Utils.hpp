@@ -1,17 +1,18 @@
 #pragma once
 
 #include "juce_core/juce_core.h"
+#include "juce_graphics/juce_graphics.h"
 #include <juce_gui_basics/juce_gui_basics.h>
 
 struct CompAndLabel : public juce::Component
 {
 public:
-    CompAndLabel(juce::String labelText) 
+    CompAndLabel(juce::String labelText)
     {
-        juce::FontOptions fontOptions("JetBrainsMono Nerd Font", "Regular", 18.0f);
-        label.setFont(fontOptions);
+        juce::FontOptions fontOptions("JetBrainsMono NFM", "SemiBold", 18.0f);
+        label.setFont(fontOptions.withKerningFactor(0.05));
         label.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
-        label.setJustificationType(juce::Justification::centredTop);
+        label.setJustificationType(juce::Justification::horizontallyCentred | juce::Justification::verticallyCentred);
         label.setText(labelText, juce::NotificationType::dontSendNotification);
 
         addAndMakeVisible(label);
@@ -27,16 +28,13 @@ public:
                              label.getBoundsInParent().getTopLeft().y, 
                              label.getBoundsInParent().getWidth(), 
                              label.getBoundsInParent().getHeight(), 
-                             juce::Justification::centredTop, 1);
+                             juce::Justification::horizontallyCentred | juce::Justification::verticallyCentred, 1);
         glyphs.createPath(glyphPath);
         
         g.setColour(juce::Colours::white);
         juce::PathStrokeType strokeType(4.0f);
         g.strokePath(glyphPath, strokeType);
         g.fillPath(glyphPath);
-        juce::DropShadow shadow;
-        shadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
-        shadow.drawForPath(g, glyphPath);
     }
 protected:
     juce::Label label;
