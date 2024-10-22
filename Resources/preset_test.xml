@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESET>
+    <NAME> "Test" </NAME>
+    <AUTHOR> "Canyon Team" </AUTHOR>
+    <PARAMETERS>
+        <DELAY>
+            <Time> 500 </Time>
+            <Feedback> 0.5 </Feedback>
+            <SyncToggle>true</SyncToggle>
+            <SyncDivider>2</SyncDivider>
+        </DELAY>
+        <REVERB>
+            <Damping> 0.2 </Damping>
+            <Freeze> false </Freeze>
+            <RoomSize> 0.3 </RoomSize>
+            <Wet> 0. 4 </Wet>
+            <Dry> 0.7 </Dry>
+            <Width> 0.4 </Width>
+        </REVERB>
+        <PLUGIN>
+            <DryWet>0.7</DryWet>
+        </PLUGIN>
+    </PARAMETERS>
+</PRESET>
