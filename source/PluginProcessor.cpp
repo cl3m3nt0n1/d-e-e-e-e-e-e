@@ -20,6 +20,7 @@ PluginProcessor::PluginProcessor()
       ReverbWetParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Reverb Wet"))),
       ReverbDryParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Reverb Dry"))),
       ReverbWidthParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Reverb Width"))),
+      mOutputLevelParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Output Level"))),
       mPluginDryWetParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Plugin Dry Wet")))
 {
 }
@@ -113,8 +114,11 @@ void PluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     reverb.setEnabled (true);
 
     dryWet.prepare (spec);
-    dryWet.setMixingRule (juce::dsp::DryWetMixingRule::balanced);
+    dryWet.setMixingRule (juce::dsp::DryWetMixingRule::linear);
     dryWet.reset();
+
+    outputLevel.prepare(spec);
+    outputLevel.reset();
 }
 
 void PluginProcessor::releaseResources()
@@ -206,6 +210,9 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     */
     dryWet.mixWetSamples (block);
     dryWet.setWetMixProportion (mPluginDryWetParameter->get());
+
+    outputLevel.setGainLinear(mOutputLevelParameter->get());
+    outputLevel.process(context);
 }
 
 //==============================================================================
@@ -216,8 +223,8 @@ bool PluginProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* PluginProcessor::createEditor()
 {
-    return new PluginEditor (*this);
-    // return new juce::GenericAudioProcessorEditor (*this);
+    // return new PluginEditor (*this);
+    return new juce::GenericAudioProcessorEditor (*this);
 }
 
 //==============================================================================
@@ -262,6 +269,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::CreateParam
 
     //Plugin Parameters
     layout.add (std::make_unique<juce::AudioParameterFloat> ("Plugin Dry Wet", "Plugin Dry Wet", juce::NormalisableRange<float> (0.0f, 1.0f, 0.01f), 0.8f));
+    
+    layout.add (std::make_unique<juce::AudioParameterFloat> ("Output Level", "Output Level", juce::NormalisableRange<float> (0.0f, 1.0f, 0.01f), 0.8f));
 
     return layout;
 }

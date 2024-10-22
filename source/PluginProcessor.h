@@ -77,8 +77,10 @@ private:
 
     // juce::dsp drywet mixer and related audio parameter
     juce::dsp::DryWetMixer<float> dryWet;
-    juce::AudioParameterFloat* mPluginDryWetParameter = nullptr;
-    
+    // juce::dsp::DryWetMixer<float> outputLevel;
+    juce::dsp::Gain<float> outputLevel;
+    juce::AudioParameterFloat* mPluginDryWetParameter = nullptr;    
+    juce::AudioParameterFloat* mOutputLevelParameter = nullptr;    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessor)
 };
