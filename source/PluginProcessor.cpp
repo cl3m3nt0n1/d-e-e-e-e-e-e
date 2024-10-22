@@ -21,6 +21,7 @@ PluginProcessor::PluginProcessor()
       ReverbDryParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Reverb Dry"))),
       ReverbWidthParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Reverb Width"))),
       mOutputLevelParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Output Level"))),
+      mOutputGainParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Output Gain"))),
       mPluginDryWetParameter (dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter ("Plugin Dry Wet")))
 {
 }
@@ -119,6 +120,11 @@ void PluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 
     outputLevel.prepare(spec);
     outputLevel.reset();
+
+    outputGain.prepare(spec);
+    outputGain.reset();
+
+    
 }
 
 void PluginProcessor::releaseResources()
@@ -213,6 +219,9 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     outputLevel.setGainLinear(mOutputLevelParameter->get());
     outputLevel.process(context);
+
+    outputGain.setGainLinear(mOutputGainParameter->get());
+    outputGain.process(context);
 }
 
 //==============================================================================
@@ -271,6 +280,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::CreateParam
     layout.add (std::make_unique<juce::AudioParameterFloat> ("Plugin Dry Wet", "Plugin Dry Wet", juce::NormalisableRange<float> (0.0f, 1.0f, 0.01f), 0.8f));
     
     layout.add (std::make_unique<juce::AudioParameterFloat> ("Output Level", "Output Level", juce::NormalisableRange<float> (0.0f, 1.0f, 0.01f), 0.8f));
+    
+    layout.add (std::make_unique<juce::AudioParameterFloat> ("Output Gain", "Output Gain", juce::NormalisableRange<float> (1.0f, 1.5f, 0.01f), 1.0f));
 
     return layout;
 }

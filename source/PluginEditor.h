@@ -40,9 +40,11 @@ private:
     DelayComponent delayComponent;
     ReverbComponent reverbComponent;
     SliderAndLabel mPluginDryWetSlider {"DRY | WET"},
-                   mPluginOutputLevel  {"OUT::LVL" };
+                   mPluginOutputLevel  {"OUT::LVL" },
+                   mPluginOutputGain   {"OUT::GAI" };
     juce::AudioProcessorValueTreeState::SliderAttachment mPluginDryWetSliderAttachement,
-                                                         mPluginOutputLevelAttachement;
+                                                         mPluginOutputLevelAttachement,
+                                                         mPluginOutputGainAttachement;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginEditor)
 };

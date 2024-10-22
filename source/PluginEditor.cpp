@@ -8,7 +8,8 @@ PluginEditor::PluginEditor (PluginProcessor& p)
     delayComponent(processorRef.getApvts()),
     reverbComponent(processorRef.getApvts()),
     mPluginDryWetSliderAttachement(processorRef.getApvts(), "Plugin Dry Wet", mPluginDryWetSlider.getslider()),
-    mPluginOutputLevelAttachement(processorRef.getApvts(), "Output Level", mPluginOutputLevel.getslider())
+    mPluginOutputLevelAttachement(processorRef.getApvts(), "Output Level", mPluginOutputLevel.getslider()),
+    mPluginOutputGainAttachement(processorRef.getApvts(), "Output Gain", mPluginOutputGain.getslider())
 {
     juce::ignoreUnused (processorRef);
 
@@ -39,6 +40,7 @@ PluginEditor::PluginEditor (PluginProcessor& p)
     addAndMakeVisible(reverbComponent);   
     addAndMakeVisible(mPluginDryWetSlider); 
     addAndMakeVisible(mPluginOutputLevel); 
+    addAndMakeVisible(mPluginOutputGain); 
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -110,10 +112,10 @@ void PluginEditor::paint (juce::Graphics& g)
     /*
      * Dry/Wet contour and drop shadow 
      */
-    auto dryWetPath = juce::Path();
-    dryWetPath.addRoundedRectangle(mPluginDryWetSlider.getBounds(), 2.0f);
-    g.setColour(juce::Colours::white);
-    g.strokePath(dryWetPath, componentStroke);
+    // auto dryWetPath = juce::Path();
+    // dryWetPath.addRoundedRectangle(mPluginDryWetSlider.getBounds(), 2.0f);
+    // g.setColour(juce::Colours::white);
+    // g.strokePath(dryWetPath, componentStroke);
     /* juce::DropShadow dryWetShadow;
     dryWetShadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
     dryWetShadow.offset = juce::Point(5,5);
@@ -162,8 +164,10 @@ void PluginEditor::resized()
 
     grid.items.set(6, juce::GridItem(delayComponent));
     grid.items.set(11, juce::GridItem(reverbComponent));
-    grid.items.set(12, juce::GridItem(mPluginDryWetSlider));
+    
     grid.items.set(8, juce::GridItem(mPluginOutputLevel));
+    grid.items.set(13, juce::GridItem(mPluginOutputGain).withMargin(30));
+    grid.items.set(12, juce::GridItem(mPluginDryWetSlider).withMargin(30));
 
     auto gridArea = getBounds();
     gridArea.removeFromTop(50);
