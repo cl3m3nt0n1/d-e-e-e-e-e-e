@@ -7,7 +7,8 @@
 struct CompAndLabel : public juce::Component
 {
 public:
-    CompAndLabel(juce::String labelText)
+    CompAndLabel(juce::String labelText) /* : shadow(juce::Colour::fromRGBA(0, 0, 0, 30), 10, {}),
+                                           shadower(shadow) */
     {
         juce::FontOptions fontOptions("JetBrainsMono NFM", "SemiBold", 18.0f);
         label.setFont(fontOptions.withKerningFactor(0.05));
@@ -38,6 +39,8 @@ public:
     }
 protected:
     juce::Label label;
+/*     juce::DropShadow shadow;
+    juce::DropShadower shadower; */
 };
 
 
@@ -53,6 +56,7 @@ public:
     SliderAndLabel(juce::String labelText) : CompAndLabel(labelText), slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
                       juce::Slider::TextEntryBoxPosition::NoTextBox)
     {
+        // shadower.setOwner(dynamic_cast<Component*>(&slider));
         addAndMakeVisible(slider);
     }
 
@@ -95,6 +99,7 @@ struct ToggleAndLabel : public CompAndLabel
 public:
     ToggleAndLabel(juce::String toggleLabel): CompAndLabel(toggleLabel)
     {
+        // shadower.setOwner(dynamic_cast<Component*>(&toggle));
         addAndMakeVisible(toggle);
     }
 

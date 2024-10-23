@@ -1,7 +1,7 @@
 #pragma once
 
-#include "juce_core/juce_core.h"
 #include "juce_gui_basics/juce_gui_basics.h"
+#include <juce_audio_basics/juce_audio_basics.h>
 
 class PresetManagerComponent 
 {
@@ -11,7 +11,9 @@ public:
 
 private:
 
-    juce::ComboBox mComboBox;
+    juce::TableListBox mListBox;
+    
+    
 
 JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PresetManagerComponent)
 };

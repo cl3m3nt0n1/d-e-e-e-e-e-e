@@ -4,7 +4,7 @@
 #include "juce_core/system/juce_PlatformDefs.h"
 #include "juce_gui_basics/juce_gui_basics.h"
 
-#include "../Utils.hpp"
+#include "../Utils/Utils.hpp"
 
 class DelayComponent : public juce::Component
 {

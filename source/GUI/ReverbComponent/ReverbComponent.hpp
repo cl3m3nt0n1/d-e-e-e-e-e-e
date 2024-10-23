@@ -8,7 +8,7 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <vector>
 
-#include "../Utils.hpp"
+#include "../Utils/Utils.hpp"
 
 /**
  * @brief The juce::component related to the reverb

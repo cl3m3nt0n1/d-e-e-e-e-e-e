@@ -35,14 +35,14 @@ public:
         g.setColour (juce::Colours::white);
         g.fillPath (p);
 
-        // Add a drop shadow effect
-        juce::Path ellipseAsPath;
-        ellipseAsPath.addEllipse (rx, ry, rw, rw);
-        juce::DropShadow shadow;
-        shadow.colour = juce::Colour (juce::uint8 (0), juce::uint8 (0), juce::uint8 (0), 0.25f);
-        shadow.radius = radius + 2;
-        shadow.offset = juce::Point (3, 3);
-        shadow.drawForPath (g, ellipseAsPath);
+        // // Add a drop shadow effect
+        // juce::Path ellipseAsPath;
+        // ellipseAsPath.addEllipse (rx, ry, rw, rw);
+        // juce::DropShadow shadow;
+        // shadow.colour = juce::Colour (juce::uint8 (0), juce::uint8 (0), juce::uint8 (0), 0.25f);
+        // shadow.radius = radius + 2;
+        // shadow.offset = juce::Point (3, 3);
+        // shadow.drawForPath (g, ellipseAsPath);
     }
 
     void drawToggleButton (juce::Graphics& g, juce::ToggleButton& button, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override
