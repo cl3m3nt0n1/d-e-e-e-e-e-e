@@ -52,21 +52,30 @@ struct Preset
     #endif
 };
 
+
 class PresetManagerComponent : public juce::Component
 {
 public:
-
     PresetManagerComponent();
 
-    Preset loadPresetFromXML(juce::File xmlFile);
+    void paint (juce::Graphics& g) override;
 
+    void resized() override;
+    
 private:
     /* =================== MEMBERS ======================= */
     juce::TextButton mPreviousButton, mNextButton, mSaveButton, mDeleteButton;
     juce::ComboBox mComboBox; // Right now, only a combo box. TODO: Replace with PrestListBoxComponent
     juce::Array<juce::File> mFileArray = {};
+    juce::Array<Preset> mPresetsArray = {};
+    juce::StringArray mPresetsNameArray = {};
+
+
     /* =================== METHODS ======================= */
     std::vector<juce::TextButton*> getButtons();
+    void checkIfPresetsFolderPathExistsAndLoadPresets();
+    Preset loadPresetFromXML(juce::File xmlFile);
+    void update();
 
 JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PresetManagerComponent)
 };

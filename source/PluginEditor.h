@@ -9,6 +9,7 @@
 #include "GUI/Utils/CustomLookNFeel.hpp"
 #include "GUI/DelayComponent/DelayComponent.hpp"
 #include "GUI/ReverbComponent/ReverbComponent.hpp"
+#include "GUI/PresetManagerComponent/PresetManagerComponent.hpp"
 
 //==============================================================================
 class PluginEditor : public juce::AudioProcessorEditor
@@ -45,6 +46,8 @@ private:
     juce::AudioProcessorValueTreeState::SliderAttachment mPluginDryWetSliderAttachement,
                                                          mPluginOutputLevelAttachement,
                                                          mPluginOutputGainAttachement;
+
+    PresetManagerComponent mPresetManager;                                                         
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginEditor)
 };

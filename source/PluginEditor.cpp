@@ -41,6 +41,7 @@ PluginEditor::PluginEditor (PluginProcessor& p)
     addAndMakeVisible(mPluginDryWetSlider); 
     addAndMakeVisible(mPluginOutputLevel); 
     addAndMakeVisible(mPluginOutputGain); 
+    addAndMakeVisible(mPresetManager); 
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -132,8 +133,9 @@ void PluginEditor::resized()
     area.removeFromTop(25);
     area.removeFromBottom(7 * getHeight() / 8);
     
-    pluginName.setBounds(area);
+    // pluginName.setBounds(area);
 
+    mPresetManager.setBounds(area);
     
 
     juce::Grid grid;
