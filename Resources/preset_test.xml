@@ -1,32 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PRESET>
-    <INFORMATION>
-        <!-- PRESET INFO -->
-        <NAME> "Test" </NAME>
-        <AUTHOR> "Canyon Team" </AUTHOR>
-        <CATEGORY> "LOCAL" </CATEGORY> <!-- As oppose to USER-->
-    </INFORMATION>
-    
-    <!-- PLUGIN PARAMETERS VALUES -->
-    <PARAMETERS>    
-        <DELAY>
-            <Time> 500 </Time>
-            <Feedback> 0.5 </Feedback>
-            <SyncToggle>true</SyncToggle>
-            <SyncDivider>2</SyncDivider>
-        </DELAY>
-        
-        <REVERB>
-            <Damping> 0.2 </Damping>
-            <Freeze> false </Freeze>
-            <RoomSize> 0.3 </RoomSize>
-            <Wet> 0. 4 </Wet>
-            <Dry> 0.7 </Dry>
-            <Width> 0.4 </Width>
-        </REVERB>
-
-        <PLUGIN>
-            <DryWet>0.7</DryWet>
-        </PLUGIN>
+    <INFORMATION  Name="Test" Author="Canyon Team" Category="LOCAL"/>
+    <PARAMETERS>
+        <DELAY Time="500" Feedback="0.5" SyncToggle="true" SyncDivider="1" />
+        <REVERB Damping="0.2" Freeze="false" RoomSize="0.6" Wet="0.4" Dry="0.8" Width="0.8" />
+        <PLUGIN DryWet="0.8" Level="0.7" Gain="1.0" />
     </PARAMETERS>
 </PRESET>
