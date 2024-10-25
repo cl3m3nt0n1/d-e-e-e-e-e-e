@@ -4,6 +4,7 @@
 #include "juce_core/system/juce_PlatformDefs.h"
 #include "juce_gui_basics/juce_gui_basics.h"
 #include <juce_audio_basics/juce_audio_basics.h>
+#include "../Utils/Utils.hpp"
 
 /**
  * @brief a simple struct to contain every parameter and 
@@ -36,6 +37,7 @@ struct Preset
     float pluginLevel          = 0.0f;
     float pluginGain           = 0.0f;
 
+    #if DEBUG
     /* ========= MEMBERS ========== */
     void print()
     {
@@ -47,6 +49,7 @@ struct Preset
         DBG("reverbDamping:");     DBG(reverbDamping);
         DBG("pluginDryWet:");      DBG(pluginDryWet);
     }
+    #endif
 };
 
 class PresetManagerComponent : public juce::Component
@@ -61,7 +64,7 @@ private:
     /* =================== MEMBERS ======================= */
     juce::TextButton mPreviousButton, mNextButton, mSaveButton, mDeleteButton;
     juce::ComboBox mComboBox; // Right now, only a combo box. TODO: Replace with PrestListBoxComponent
-
+    juce::Array<juce::File> mFileArray = {};
     /* =================== METHODS ======================= */
     std::vector<juce::TextButton*> getButtons();
 

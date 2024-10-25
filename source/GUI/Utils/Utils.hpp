@@ -4,6 +4,19 @@
 #include "juce_graphics/juce_graphics.h"
 #include <juce_gui_basics/juce_gui_basics.h>
 
+namespace Utils
+{
+    // Writing it as a universal way to browse files.
+    // On Linux:   ~/.config/{JucePlugin_Manufacturer}/{JucePlugin_Name}/Presets/
+    // On MacOS:   ~/Library/{JucePlugin_Manufacturer}/{JucePlugin_Name}/Presets/
+    // On Windows: \Documents and Settings\username\Application Data\{JucePlugin_Manufacturer}\{JucePlugin_Name}\Presets
+    const juce::File PLUGIN_PRESET_PATH (juce::File::getSpecialLocation(juce::File::SpecialLocationType::userApplicationDataDirectory)
+                                                                                                        .getChildFile(JucePlugin_Manufacturer)
+                                                                                                        .getChildFile(JucePlugin_Name)
+                                                                                                        .getChildFile("Presets"));
+}
+
+
 struct CompAndLabel : public juce::Component
 {
 public:

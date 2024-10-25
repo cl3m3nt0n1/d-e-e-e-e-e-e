@@ -1,6 +1,5 @@
 #include "PresetManagerComponent.hpp"
-#include "juce_core/system/juce_PlatformDefs.h"
-#include <memory>
+
 
 
 PresetManagerComponent::PresetManagerComponent()
@@ -12,9 +11,34 @@ PresetManagerComponent::PresetManagerComponent()
 
     mComboBox.setTextWhenNothingSelected("Select preset");
 
-    auto preset = loadPresetFromXML(juce::File("/home/clementone/Documents/DEVS/d-e-e-e-e-e-e/Resources/preset_test_1.xml"));
-    preset.print();
+    // if our plugin's folder doesn't exist on the system, 
+    if(!Utils::PLUGIN_PRESET_PATH.exists()) // Presets
+    {
+        DBG("Presets folder doesn't exists");
+        // We create every subdirectory if they don't exist
+        if(!Utils::PLUGIN_PRESET_PATH.getParentDirectory().exists()) // JucePlugin_Name
+        {
+            DBG(JucePlugin_Name " folder doesn't exists");
 
+            if(!Utils::PLUGIN_PRESET_PATH.getParentDirectory().getParentDirectory().exists()) // JucePlugin_Manufacturer
+            {
+                DBG(JucePlugin_Manufacturer " folder doesn't exists");
+                Utils::PLUGIN_PRESET_PATH.getParentDirectory().getParentDirectory().createDirectory(); 
+            }
+            Utils::PLUGIN_PRESET_PATH.getParentDirectory().createDirectory();
+        } 
+        Utils::PLUGIN_PRESET_PATH.createDirectory();
+    }
+    else // Our local presets directory exists  
+    {
+        mFileArray = Utils::PLUGIN_PRESET_PATH.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*.xml");        
+    }
+
+    auto preset = loadPresetFromXML(mFileArray.getFirst());
+    
+    #if DEBUG
+    preset.print();
+    #endif
 
     for( auto button : getButtons() )
     {
