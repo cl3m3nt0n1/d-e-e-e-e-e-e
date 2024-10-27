@@ -1,5 +1,6 @@
 #pragma once
 
+#include "juce_audio_processors/juce_audio_processors.h"
 #include "juce_core/juce_core.h"
 #include "juce_core/system/juce_PlatformDefs.h"
 #include "juce_gui_basics/juce_gui_basics.h"
@@ -56,7 +57,7 @@ struct Preset
 class PresetManagerComponent : public juce::Component
 {
 public:
-    PresetManagerComponent();
+    PresetManagerComponent(juce::AudioProcessorValueTreeState& valueTree);
 
     void paint (juce::Graphics& g) override;
 
@@ -70,13 +71,21 @@ private:
     juce::Array<Preset> mPresetsArray = {};
     juce::StringArray mPresetsNameArray = {};
     int mCurrentPresetIndex = 0;
+    juce::AudioProcessorValueTreeState& apvts;
 
 
     /* =================== METHODS ======================= */
     std::vector<juce::TextButton*> getButtons();
     void checkIfPresetsFolderPathExistsAndLoadPresets();
     Preset loadPresetFromXML(juce::File xmlFile);
-    void update();
+
+    /**
+     * @brief Updates the state of the current apvts (set previously by reference)
+     *        using the preset param values. This internally uses a juce::ValueTree
+     *        and the AudioProcessorValueTreeState::replaceState() method. 
+     * @param preset The set of values that represent a preset.
+     */
+    void updateAPVTS(Preset preset);
 
 JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PresetManagerComponent)
 };

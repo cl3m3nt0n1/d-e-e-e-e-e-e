@@ -9,7 +9,8 @@ PluginEditor::PluginEditor (PluginProcessor& p)
     reverbComponent(processorRef.getApvts()),
     mPluginDryWetSliderAttachement(processorRef.getApvts(), "Plugin Dry Wet", mPluginDryWetSlider.getslider()),
     mPluginOutputLevelAttachement(processorRef.getApvts(), "Output Level", mPluginOutputLevel.getslider()),
-    mPluginOutputGainAttachement(processorRef.getApvts(), "Output Gain", mPluginOutputGain.getslider())
+    mPluginOutputGainAttachement(processorRef.getApvts(), "Output Gain", mPluginOutputGain.getslider()),
+    mPresetManager(processorRef.getApvts())
 {
     juce::ignoreUnused (processorRef);
 

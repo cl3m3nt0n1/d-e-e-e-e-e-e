@@ -1,8 +1,10 @@
 #include "PresetManagerComponent.hpp"
 #include "juce_core/system/juce_PlatformDefs.h"
+#include "juce_data_structures/juce_data_structures.h"
 #include "juce_gui_basics/juce_gui_basics.h"
 
-PresetManagerComponent::PresetManagerComponent()
+PresetManagerComponent::PresetManagerComponent(juce::AudioProcessorValueTreeState& valueTree) :
+    apvts(valueTree)
 {
     checkIfPresetsFolderPathExistsAndLoadPresets();
 
@@ -28,6 +30,7 @@ PresetManagerComponent::PresetManagerComponent()
         {
             mCurrentPresetIndex++;
             mComboBox.setSelectedId(mCurrentPresetIndex);
+            updateAPVTS(mPresetsArray[mCurrentPresetIndex]);
         }
     };
     
@@ -37,7 +40,13 @@ PresetManagerComponent::PresetManagerComponent()
         {
             mCurrentPresetIndex--;
             mComboBox.setSelectedId(mCurrentPresetIndex);
+            updateAPVTS(mPresetsArray[mCurrentPresetIndex]);
         }
+    };
+
+    mComboBox.onChange = [this]()
+    {
+        updateAPVTS(mPresetsArray[mComboBox.getSelectedId()]);
     };
 
 }
@@ -187,6 +196,33 @@ void PresetManagerComponent::checkIfPresetsFolderPathExistsAndLoadPresets()
     }
 }
 
-void PresetManagerComponent::update()
+void PresetManagerComponent::updateAPVTS(Preset preset)
 {
+    // Not the perfect way of doing it...
+    juce::ValueTree newState
+    { "Parameters", {},
+        {
+            { "PARAM", {{ "id", "Delay Feedback"    }, { "value", preset.delayFeedback }}},
+            { "PARAM", {{ "id", "Delay Sync"        }, { "value", preset.delaySyncDivider }}},
+            { "PARAM", {{ "id", "Delay Sync Toggle" }, { "value", preset.delaySyncToggleState }}},
+            { "PARAM", {{ "id", "Delay Time"        }, { "value", preset.delayTime }}},
+            { "PARAM", {{ "id", "Output Level"      }, { "value", preset.pluginLevel }}},
+            { "PARAM", {{ "id", "Plugin Dry Wet"    }, { "value", preset.pluginDryWet }}},
+            { "PARAM", {{ "id", "Output Gain"       }, { "value", preset.pluginGain }}},
+            { "PARAM", {{ "id", "Reverb Damping"    }, { "value", preset.reverbDamping }}},
+            { "PARAM", {{ "id", "Reverb Dry"        }, { "value", preset.reverbDry }}},
+            { "PARAM", {{ "id", "Reverb Freeze"     }, { "value", preset.reverbFreezeState }}},
+            { "PARAM", {{ "id", "Reverb Room Size"  }, { "value", preset.reverbRoomSize }}},
+            { "PARAM", {{ "id", "Reverb Wet"        }, { "value", preset.reverbWet }}},
+            { "PARAM", {{ "id", "Reverb Width"      }, { "value", preset.reverbWidth }}},
+        }
+    };
+
+    DBG(newState.toXmlString());
+
+    if (newState.isValid())
+    {
+        DBG("Tree is valid.");
+        apvts.replaceState(newState);
+    }
 }
