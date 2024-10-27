@@ -69,6 +69,7 @@ private:
     juce::Array<juce::File> mFileArray = {};
     juce::Array<Preset> mPresetsArray = {};
     juce::StringArray mPresetsNameArray = {};
+    int mCurrentPresetIndex = 0;
 
 
     /* =================== METHODS ======================= */

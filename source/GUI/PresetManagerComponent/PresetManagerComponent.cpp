@@ -12,7 +12,7 @@ PresetManagerComponent::PresetManagerComponent()
     mDeleteButton.setButtonText("Delete");
 
     mComboBox.setTextWhenNothingSelected("Select preset");
-    mComboBox.setSelectedId(0);
+    mComboBox.setSelectedId(mCurrentPresetIndex);
     addAndMakeVisible(mComboBox);
 
 
@@ -21,6 +21,25 @@ PresetManagerComponent::PresetManagerComponent()
         button->setMouseCursor(juce::MouseCursor::PointingHandCursor);
         addAndMakeVisible(button);
     }
+
+    mNextButton.onClick = [this]()
+    {
+        if(mCurrentPresetIndex < mPresetsNameArray.size())
+        {
+            mCurrentPresetIndex++;
+            mComboBox.setSelectedId(mCurrentPresetIndex);
+        }
+    };
+    
+    mPreviousButton.onClick = [this]()
+    {
+        if(mCurrentPresetIndex > 1)
+        {
+            mCurrentPresetIndex--;
+            mComboBox.setSelectedId(mCurrentPresetIndex);
+        }
+    };
+
 }
 
 void PresetManagerComponent::paint (juce::Graphics& g) 
@@ -61,9 +80,6 @@ void PresetManagerComponent::resized()
 
     grid.performLayout (getLocalBounds());
 }
-
-
-
 
 Preset PresetManagerComponent::loadPresetFromXML(juce::File xmlFile)
 {
