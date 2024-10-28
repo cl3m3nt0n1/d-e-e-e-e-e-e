@@ -2,6 +2,8 @@
 #include "juce_core/system/juce_PlatformDefs.h"
 #include "juce_data_structures/juce_data_structures.h"
 #include "juce_gui_basics/juce_gui_basics.h"
+#include <cstddef>
+#include <new>
 
 PresetManagerComponent::PresetManagerComponent(juce::AudioProcessorValueTreeState& valueTree) :
     apvts(valueTree)
@@ -44,6 +46,23 @@ PresetManagerComponent::PresetManagerComponent(juce::AudioProcessorValueTreeStat
         }
     };
 
+    mSaveButton.onClick = [this]()
+    {
+        
+        // Taken out of JUCE's DialogsDemo.h
+        asyncAlertWindow = std::make_unique<juce::AlertWindow> ("Save Preset",
+                                                                "Enter the name of the preset to save.",
+                                                                juce::MessageBoxIconType::QuestionIcon);
+
+        asyncAlertWindow->addTextEditor ("presetName", "Name");
+        asyncAlertWindow->addButton ("OK",     1, juce::KeyPress (juce::KeyPress::returnKey, 0, 0));
+        asyncAlertWindow->addButton ("Cancel", 0, juce::KeyPress (juce::KeyPress::escapeKey, 0, 0));
+        asyncAlertWindow->setEscapeKeyCancels(true);
+        
+        // This is clearly black magic
+        asyncAlertWindow->enterModalState(true, juce::ModalCallbackFunction::create (AsyncAlertBoxResultChosen{*this}));
+    };
+
     mComboBox.onChange = [this]()
     {
         updateAPVTS(mPresetsArray[mComboBox.getSelectedId()]);
@@ -53,7 +72,6 @@ PresetManagerComponent::PresetManagerComponent(juce::AudioProcessorValueTreeStat
 
 void PresetManagerComponent::paint (juce::Graphics& g) 
 {
-    
 }
 
 void PresetManagerComponent::resized() 
@@ -149,6 +167,14 @@ Preset PresetManagerComponent::loadPresetFromXML(juce::File xmlFile)
         return preset;
     }
     return {};
+}
+
+void PresetManagerComponent::savePresetToXML(juce::StringRef presetName)
+{
+    // juce::String presetName = {};
+    DBG(presetName);
+
+    
 }
 
 std::vector<juce::TextButton*> PresetManagerComponent::getButtons()
