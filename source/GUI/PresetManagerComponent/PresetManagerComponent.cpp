@@ -1,9 +1,8 @@
 #include "PresetManagerComponent.hpp"
+#include "juce_core/juce_core.h"
 #include "juce_core/system/juce_PlatformDefs.h"
 #include "juce_data_structures/juce_data_structures.h"
 #include "juce_gui_basics/juce_gui_basics.h"
-#include <cstddef>
-#include <new>
 
 PresetManagerComponent::PresetManagerComponent(juce::AudioProcessorValueTreeState& valueTree) :
     apvts(valueTree)
@@ -46,6 +45,14 @@ PresetManagerComponent::PresetManagerComponent(juce::AudioProcessorValueTreeStat
         }
     };
 
+    mComboBox.onChange = [this]()
+    {
+        DBG(mCurrentPresetIndex);
+        mCurrentPresetIndex = mComboBox.getSelectedId();
+        DBG(mCurrentPresetIndex);
+        updateAPVTS(mPresetsArray[mCurrentPresetIndex - 1]);
+    };
+
     mSaveButton.onClick = [this]()
     {
         
@@ -63,11 +70,13 @@ PresetManagerComponent::PresetManagerComponent(juce::AudioProcessorValueTreeStat
         asyncAlertWindow->enterModalState(true, juce::ModalCallbackFunction::create (AsyncAlertBoxResultChosen{*this}));
     };
 
-    mComboBox.onChange = [this]()
-    {
-        updateAPVTS(mPresetsArray[mComboBox.getSelectedId()]);
-    };
 
+
+    for (auto preset : mPresetsArray)
+        DBG(preset.presetName);
+
+    for (auto preset : mPresetsNameArray)
+        DBG(preset);
 }
 
 void PresetManagerComponent::paint (juce::Graphics& g) 
@@ -171,10 +180,49 @@ Preset PresetManagerComponent::loadPresetFromXML(juce::File xmlFile)
 
 void PresetManagerComponent::savePresetToXML(juce::StringRef presetName)
 {
-    // juce::String presetName = {};
-    DBG(presetName);
+    auto preset = dumpAPVTSstate(presetName);
 
+    // Preset preset;
+
+    juce::XmlElement motherNode ("PRESET");
+    juce::XmlElement* infoChild = new juce::XmlElement ("INFORMATION");
     
+    infoChild->setAttribute("Name",     preset.presetName);
+    infoChild->setAttribute("Author",   preset.authorName);
+    infoChild->setAttribute("Category", preset.category);
+   
+    motherNode.addChildElement (infoChild);
+
+    juce::XmlElement* parameterChild   = new juce::XmlElement ("PARAMETERS");
+    juce::XmlElement* delayGrandChild  = new juce::XmlElement ("DELAY");
+    juce::XmlElement* reverbGrandChild = new juce::XmlElement ("REVERB");
+    juce::XmlElement* pluginGrandChild = new juce::XmlElement ("PLUGIN");
+
+    delayGrandChild->setAttribute("Time",        preset.delayTime);
+    delayGrandChild->setAttribute("Feedback",    preset.delayFeedback);
+    delayGrandChild->setAttribute("SyncToggle",  preset.delaySyncToggleState ? "true" : "false");
+    delayGrandChild->setAttribute("SyncDivider", preset.delaySyncDivider);
+
+    reverbGrandChild->setAttribute("Damping",    preset.reverbDamping);
+    reverbGrandChild->setAttribute("Freeze",     preset.reverbFreezeState ? "true" : "false");
+    reverbGrandChild->setAttribute("RoomSize",   preset.reverbRoomSize);
+    reverbGrandChild->setAttribute("Wet",        preset.reverbWet);
+    reverbGrandChild->setAttribute("Dry",        preset.reverbDry);
+    reverbGrandChild->setAttribute("Width",      preset.reverbWidth);
+
+    pluginGrandChild->setAttribute("DryWet",     preset.pluginDryWet);
+    pluginGrandChild->setAttribute("Level",      preset.pluginLevel);
+    pluginGrandChild->setAttribute("Gain",       preset.pluginGain);
+
+    parameterChild->addChildElement(delayGrandChild);
+    parameterChild->addChildElement(reverbGrandChild);
+    parameterChild->addChildElement(pluginGrandChild);
+
+    motherNode.addChildElement(parameterChild);
+
+    auto xmlString = motherNode.toString();
+
+    motherNode.writeTo(Utils::PLUGIN_PRESET_PATH.getChildFile(preset.presetName.removeCharacters(" ") + ".xml"));
 }
 
 std::vector<juce::TextButton*> PresetManagerComponent::getButtons()
@@ -211,12 +259,12 @@ void PresetManagerComponent::checkIfPresetsFolderPathExistsAndLoadPresets()
     else // Our local presets directory exists  
     {
         mFileArray = Utils::PLUGIN_PRESET_PATH.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*.xml");
-        
+
         // Fill mPresetsArray
-        for (auto file : mFileArray) 
+        for (int i = 0; i < mFileArray.size(); ++i) 
         {
-            mPresetsArray.add(loadPresetFromXML(file));
-            mPresetsNameArray.add(mPresetsArray.getLast().presetName);
+            mPresetsArray.add(loadPresetFromXML(mFileArray[i]));
+            mPresetsNameArray.add(mPresetsArray[i].presetName);
         }
         mComboBox.addItemList(mPresetsNameArray, 1);
     }
@@ -251,4 +299,32 @@ void PresetManagerComponent::updateAPVTS(Preset preset)
         DBG("Tree is valid.");
         apvts.replaceState(newState);
     }
+}
+
+Preset PresetManagerComponent::dumpAPVTSstate(juce::StringRef presetName) 
+{
+    Preset preset;
+
+    preset.presetName = presetName;
+    preset.authorName = "User";
+    preset.category   = "USER";
+
+    preset.delayFeedback        = apvts.getParameter("Delay Feedback")->getValue();
+    preset.delayTime            = apvts.getParameterAsValue("Delay Time").getValue();
+    preset.delaySyncToggleState = static_cast<bool>(apvts.getParameter("Delay Sync Toggle")->getValue());
+    preset.delaySyncDivider     = apvts.getParameterAsValue("Delay Sync").getValue();
+
+    preset.pluginLevel          = apvts.getParameter("Output Level")->getValue();
+    preset.pluginGain           = apvts.getParameter("Output Gain")->getValue();
+    preset.pluginDryWet         = apvts.getParameter("Plugin Dry Wet")->getValue();
+    
+    preset.reverbDamping        = apvts.getParameter("Reverb Damping")->getValue();
+    preset.reverbDry            = apvts.getParameter("Reverb Dry")->getValue();
+    preset.reverbFreezeState    = static_cast<bool>(apvts.getParameter("Reverb Freeze")->getValue());
+    preset.reverbRoomSize       = apvts.getParameter("Reverb Room Size")->getValue();
+    preset.reverbWet            = apvts.getParameter("Reverb Wet")->getValue();
+    preset.reverbWidth          = apvts.getParameter("Reverb Width")->getValue();
+
+    return preset;
+
 }

@@ -65,10 +65,8 @@ public:
     void resized() override;
     
 private:
-
-    
-
     /* =================== MEMBERS ======================= */
+
     juce::TextButton mPreviousButton, mNextButton, mSaveButton, mDeleteButton;
     juce::ComboBox mComboBox; // Right now, only a combo box. TODO: Replace with PrestListBoxComponent
     juce::Array<juce::File> mFileArray = {};
@@ -118,6 +116,12 @@ private:
      */
     void updateAPVTS(Preset preset);
 
+    /**
+     * @brief dumps the state of each parameter of the APVTS  
+     *        and returns it in the shape of a Preset
+     * @return Preset 
+     */
+    Preset dumpAPVTSstate(juce::StringRef presetName);
 
     /* ============= STRUCTS ============== */
     
@@ -136,10 +140,10 @@ private:
         {
             manager.asyncAlertWindow->exitModalState (result);
             manager.asyncAlertWindow->setVisible (false);
-            manager.savePresetToXML(manager.asyncAlertWindow->getTextEditorContents("presetName"));
-            manager.asyncAlertWindow.reset(); // deleting the pointed AlertWindow
+            
+            if(result)
+                manager.savePresetToXML(manager.asyncAlertWindow->getTextEditorContents("presetName"));
         }
-
         private: 
         PresetManagerComponent& manager;
     };
