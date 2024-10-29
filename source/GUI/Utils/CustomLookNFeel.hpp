@@ -2,7 +2,6 @@
 
 #include "juce_core/juce_core.h"
 #include "juce_graphics/juce_graphics.h"
-#include <cmath>
 #include <juce_gui_basics/juce_gui_basics.h>
 
 class CustomLookNFeel : public juce::LookAndFeel_V4
@@ -93,5 +92,60 @@ public:
         }
     }
 
+    void drawComboBox(juce::Graphics& g, int width, int height, bool isButtonDown, int buttonX, int buttonY, int buttonW, int buttonH, juce::ComboBox &box) override
+    {
+        auto cornerSize = 20.0f;
+        juce::Rectangle<int> boxBounds (0, 0, width, height);
+        boxBounds.reduce(boxBounds.getWidth() / 12, boxBounds.getHeight() / 24);
+        g.setColour (juce::Colour::fromRGBA(36, 22, 35, 255));
+        g.fillRoundedRectangle (boxBounds.toFloat(), cornerSize);
+        g.setColour (juce::Colour::fromFloatRGBA(251, 245, 243, 255));
+        g.drawRoundedRectangle (boxBounds.toFloat(), cornerSize, 5.0f);
+    }
+
+    void positionComboBoxText (juce::ComboBox& box, juce::Label& label) override
+    {
+        label.setBounds(box.getLocalBounds().withSizeKeepingCentre(box.getWidth() / 4, box.getHeight() / 2));
+
+        label.setJustificationType(juce::Justification::centred);
+        label.setFont(fontOptions.withKerningFactor(0.05));
+    }
+
+    void drawButtonBackground (juce::Graphics& g, juce::Button& button, const juce::Colour& backgroundColour,
+                               bool, bool isButtonDown) override
+    {
+        auto cornerSize = 20.0f;
+        juce::Rectangle<int> boxBounds (0, 0, button.getWidth(), button.getHeight());
+        boxBounds.reduce(boxBounds.getWidth() / 12, boxBounds.getHeight() / 24);
+        g.setColour (juce::Colour::fromRGBA(36, 22, 35, 255));
+        g.fillRoundedRectangle (boxBounds.toFloat(), cornerSize);
+        g.setColour (juce::Colour::fromFloatRGBA(251, 245, 243, 255));
+        g.drawRoundedRectangle (boxBounds.toFloat(), cornerSize, 5.0f);
+    }
+
+    void drawButtonText (juce::Graphics& g, juce::TextButton& button, bool isMouseOverButton, bool isButtonDown) override
+    {
+        g.setFont (fontOptions.withKerningFactor(0.05f).withHeight(14.0f));
+        g.setColour (button.findColour (button.getToggleState() ? juce::TextButton::textColourOnId
+                                                                : juce::TextButton::textColourOffId)
+                        .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
+    
+        auto yIndent = juce::jmin (4, button.proportionOfHeight (0.3f));
+        auto cornerSize = juce::jmin (button.getHeight(), button.getWidth()) / 2;
+    
+        auto fontHeight = juce::roundToInt (fontOptions.getHeight() * 0.6f);
+        auto leftIndent  = juce::jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnLeft()  ? 4 : 2));
+        auto rightIndent = juce::jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnRight() ? 4 : 2));
+        auto textWidth = button.getWidth() - leftIndent - rightIndent;
+    
+        if (textWidth > 0)
+            g.drawFittedText (button.getButtonText(),
+                            leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
+                            juce::Justification::centred, 2);
+    }
+
+
 private:
+    juce::FontOptions fontOptions {"JetBrainsMono NFM", "SemiBold", 18.0f};
+
 };

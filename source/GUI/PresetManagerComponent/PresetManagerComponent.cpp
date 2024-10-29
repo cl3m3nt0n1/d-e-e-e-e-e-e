@@ -9,12 +9,12 @@ PresetManagerComponent::PresetManagerComponent(juce::AudioProcessorValueTreeStat
 {
     checkIfPresetsFolderPathExistsAndLoadPresets();
 
-    mPreviousButton.setButtonText("Previous");
-    mNextButton.setButtonText("Next");
-    mSaveButton.setButtonText("Save");
-    mDeleteButton.setButtonText("Delete");
+    mPreviousButton.setButtonText(" Prev. ");
+    mNextButton.setButtonText(" Next. ");
+    mSaveButton.setButtonText(" Save. ");
+    mDeleteButton.setButtonText(" Del. ");
 
-    mComboBox.setTextWhenNothingSelected("Select preset");
+    mComboBox.setTextWhenNothingSelected("");
     mComboBox.setSelectedId(mCurrentPresetIndex);
     addAndMakeVisible(mComboBox);
 
@@ -47,9 +47,7 @@ PresetManagerComponent::PresetManagerComponent(juce::AudioProcessorValueTreeStat
 
     mComboBox.onChange = [this]()
     {
-        DBG(mCurrentPresetIndex);
         mCurrentPresetIndex = mComboBox.getSelectedId();
-        DBG(mCurrentPresetIndex);
         updateAPVTS(mPresetsArray[mCurrentPresetIndex - 1]);
     };
 
@@ -69,14 +67,6 @@ PresetManagerComponent::PresetManagerComponent(juce::AudioProcessorValueTreeStat
         // This is clearly black magic
         asyncAlertWindow->enterModalState(true, juce::ModalCallbackFunction::create (AsyncAlertBoxResultChosen{*this}));
     };
-
-
-
-    for (auto preset : mPresetsArray)
-        DBG(preset.presetName);
-
-    for (auto preset : mPresetsNameArray)
-        DBG(preset);
 }
 
 void PresetManagerComponent::paint (juce::Graphics& g) 
@@ -85,12 +75,19 @@ void PresetManagerComponent::paint (juce::Graphics& g)
 
 void PresetManagerComponent::resized() 
 {
+    auto area = getLocalBounds();
+
+    area.removeFromRight(getLocalBounds().getWidth() / 24);
+    area.removeFromLeft(getLocalBounds().getWidth() / 24);
+
     juce::Grid grid;
     using Track = juce::Grid::TrackInfo;
     using Fr = juce::Grid::Fr;
 
     grid.alignContent = juce::Grid::AlignContent::spaceEvenly;
     grid.alignItems = juce::Grid::AlignItems::center;
+
+    grid.columnGap = juce::Grid::Px(5);
 
     grid.templateRows = {
         Track (Fr (1))
@@ -99,7 +96,7 @@ void PresetManagerComponent::resized()
     grid.templateColumns = {
         Track (Fr (1)),
         Track (Fr (1)),
-        Track (Fr (10)),
+        Track (Fr (6)),
         Track (Fr (1)),
         Track (Fr (1))
     };
@@ -114,7 +111,7 @@ void PresetManagerComponent::resized()
     grid.items.set (4, mDeleteButton);
 
 
-    grid.performLayout (getLocalBounds());
+    grid.performLayout (area);
 }
 
 Preset PresetManagerComponent::loadPresetFromXML(juce::File xmlFile)
@@ -292,11 +289,8 @@ void PresetManagerComponent::updateAPVTS(Preset preset)
         }
     };
 
-    DBG(newState.toXmlString());
-
     if (newState.isValid())
     {
-        DBG("Tree is valid.");
         apvts.replaceState(newState);
     }
 }
