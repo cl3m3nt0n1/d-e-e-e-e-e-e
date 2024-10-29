@@ -1,4 +1,5 @@
 #include "PluginEditor.h"
+#include "GUI/PresetManagerComponent/PresetManagerComponent.hpp"
 #include "juce_events/juce_events.h"
 #include "juce_graphics/juce_graphics.h"
 #include "juce_gui_basics/juce_gui_basics.h"
@@ -71,12 +72,12 @@ void PluginEditor::paint (juce::Graphics& g)
     g.setColour(juce::Colour::fromRGB(225, 90, 151));
     g.fillPath (firstTriangle);
     g.setColour(juce::Colours::white);
-    g.strokePath(firstTriangle, pathStroke);
+    // g.strokePath(firstTriangle, pathStroke);
     
     g.setColour(juce::Colour::fromRGB(50, 222, 138));
     g.fillPath (secondTriangle);
     g.setColour(juce::Colours::white);
-    g.strokePath(secondTriangle, pathStroke);
+    // g.strokePath(secondTriangle, pathStroke);
 
     /*
      * Delay component contour and drop shadow 
@@ -130,13 +131,16 @@ void PluginEditor::resized()
     inspectButton.setBounds (0, 0, 50, 25);
     #endif
 
-    auto area = getBounds();
-    area.removeFromTop(25);
-    area.removeFromBottom(7 * getHeight() / 8);
+    auto pluginNameArea = getBounds();
+    pluginNameArea.removeFromTop(10);
+    pluginNameArea.removeFromBottom(7 * getHeight() / 8);
     
-    // pluginName.setBounds(area);
+    pluginName.setBounds(pluginNameArea);
 
-    mPresetManager.setBounds(area);
+    auto presetArea = getBounds();
+    presetArea.removeFromTop(70);
+    presetArea.removeFromBottom(4 * getHeight() / 5);
+    mPresetManager.setBounds(presetArea.withSizeKeepingCentre(6 * presetArea.getWidth() / 8, presetArea.getHeight()));
     
 
     juce::Grid grid;
@@ -173,7 +177,7 @@ void PluginEditor::resized()
     grid.items.set(12, juce::GridItem(mPluginDryWetSlider).withMargin(30));
 
     auto gridArea = getBounds();
-    gridArea.removeFromTop(50);
+    gridArea.removeFromTop(120);
     grid.performLayout (gridArea);
 
 
