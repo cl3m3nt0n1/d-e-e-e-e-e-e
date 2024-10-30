@@ -3,6 +3,7 @@
 #include "juce_events/juce_events.h"
 #include "juce_graphics/juce_graphics.h"
 #include "juce_gui_basics/juce_gui_basics.h"
+#include <cstddef>
 
 PluginEditor::PluginEditor (PluginProcessor& p)
     : AudioProcessorEditor (&p), processorRef (p),
@@ -84,45 +85,49 @@ void PluginEditor::paint (juce::Graphics& g)
      */
     auto componentStroke = juce::PathStrokeType(6.0f, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded);
     auto delayComponentPath = juce::Path();
-    delayComponentPath.addRoundedRectangle(delayComponent.getBounds().getX(),
-                                           delayComponent.getBounds().getY(), 
-                                           delayComponent.getBounds().getWidth()  + 3, 
-                                           delayComponent.getBounds().getHeight() + 3, 
-                                           2.0f);
+    delayComponentPath.addRoundedRectangle(delayComponent.getBounds(), 2.0f);
     g.setColour(juce::Colours::white);
     g.strokePath(delayComponentPath, componentStroke);
-   /*  juce::DropShadow delayShadow;
-    delayShadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
-    delayShadow.offset = juce::Point(5,5);
-    delayShadow.drawForPath(g, delayComponentPath);
- */
+
     /*
      * Reverb component contour and drop shadow 
      */
     auto reverbComponentPath = juce::Path();
-    reverbComponentPath.addRoundedRectangle(reverbComponent.getBounds().getX(),
-                                            reverbComponent.getBounds().getY(), 
-                                            reverbComponent.getBounds().getWidth()  + 3, 
-                                            reverbComponent.getBounds().getHeight() + 3, 
-                                            2.0f);
+    reverbComponentPath.addRoundedRectangle(reverbComponent.getBounds(), 2.0f);
     g.setColour(juce::Colours::white);
     g.strokePath(reverbComponentPath, componentStroke);
-/*     juce::DropShadow reverbShadow;
-    reverbShadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
-    reverbShadow.offset = juce::Point(10,10);
-    reverbShadow.drawForPath(g, reverbComponentPath); */
+
+
+    /*
+     * Level contour and drop shadow 
+     */
+    auto levelPath = juce::Path();
+    levelPath.addRoundedRectangle(mPluginOutputLevel.getBounds(), 2.0f);
+    g.setColour(juce::Colours::white);
+    g.strokePath(levelPath, componentStroke);
+    g.setColour(juce::Colour::fromRGB(50, 222, 138));
+    g.fillPath(levelPath);
+    
+    /*
+     * Gain contour and drop shadow 
+     */
+    auto gainPath = juce::Path();
+    gainPath.addRoundedRectangle(mPluginOutputGain.getBounds(), 2.0f);
+    g.setColour(juce::Colours::white);
+    g.strokePath(gainPath, componentStroke);
+    g.setColour(juce::Colour::fromRGB(225, 90, 151));
+    g.fillPath(gainPath);
 
     /*
      * Dry/Wet contour and drop shadow 
      */
-    // auto dryWetPath = juce::Path();
-    // dryWetPath.addRoundedRectangle(mPluginDryWetSlider.getBounds(), 2.0f);
-    // g.setColour(juce::Colours::white);
-    // g.strokePath(dryWetPath, componentStroke);
-    /* juce::DropShadow dryWetShadow;
-    dryWetShadow.colour = juce::Colour(juce::uint8(0), juce::uint8(0), juce::uint8(0), 0.25f);
-    dryWetShadow.offset = juce::Point(5,5);
-    dryWetShadow.drawForPath(g, dryWetPath) */;
+    auto dryWetPath = juce::Path();
+    dryWetPath.addRoundedRectangle(mPluginDryWetSlider.getBounds(), 2.0f);
+    g.setColour(juce::Colours::white);
+    g.strokePath(dryWetPath, componentStroke);
+    g.setColour(juce::Colour::fromRGB(225, 90, 151));
+    g.fillPath(dryWetPath);
+
 }
 
 void PluginEditor::resized()
@@ -131,34 +136,60 @@ void PluginEditor::resized()
     inspectButton.setBounds (0, 0, 50, 25);
     #endif
 
-    auto pluginNameArea = getBounds();
-    pluginNameArea.removeFromTop(10);
-    pluginNameArea.removeFromBottom(7 * getHeight() / 8);
-    
-    pluginName.setBounds(pluginNameArea);
-
-    auto presetArea = getBounds();
-    presetArea.removeFromTop(70);
-    presetArea.removeFromBottom(4 * getHeight() / 5);
-    mPresetManager.setBounds(presetArea.withSizeKeepingCentre(6 * presetArea.getWidth() / 8, presetArea.getHeight()));
-    
-
-    juce::Grid grid;
-
     using Track = juce::Grid::TrackInfo;
     using Fr = juce::Grid::Fr;
 
-    grid.columnGap = juce::Grid::Px(40);
-    grid.rowGap    = juce::Grid::Px(20);
+    auto gridArea = getBounds();
+    auto utilsArea = gridArea.removeFromTop(120);
 
-    grid.templateRows    = { 
+    juce::Grid utilsGrid;
+
+    utilsGrid.templateColumns = { 
+        Track (Fr (1)),
+        Track (Fr (20)),
+        Track (Fr (1)),
+    };
+    
+    utilsGrid.templateRows = { 
+        Track (Fr (1)),
+        Track (Fr (1)),
+    };
+
+    for(int i = 0; i < 6; ++i)
+        utilsGrid.items.set(i, nullptr);
+    
+    utilsGrid.items.set(1, pluginName);
+    utilsGrid.items.set(4, mPresetManager);
+
+    utilsGrid.performLayout(utilsArea.withSizeKeepingCentre(7 * utilsArea.getWidth() / 8, utilsArea.getHeight()));
+
+
+    // auto pluginNameArea = getBounds();
+    // pluginNameArea.removeFromTop(10);
+    // pluginNameArea.removeFromBottom(7 * getHeight() / 8);
+    
+    // pluginName.setBounds(pluginNameArea);
+
+    // auto presetArea = getBounds();
+    // presetArea.removeFromTop(70);
+    // presetArea.removeFromBottom(4 * getHeight() / 5);
+    // mPresetManager.setBounds(presetArea.withSizeKeepingCentre(6 * presetArea.getWidth() / 8, presetArea.getHeight()));
+    
+
+
+    juce::Grid parameterGrid;
+
+    parameterGrid.columnGap = juce::Grid::Px(30);
+    parameterGrid.rowGap    = juce::Grid::Px(10);
+
+    parameterGrid.templateRows    = { 
                              Track (Fr (0)), // to center everything
                              Track (Fr (5)), // Main Content
                              Track (Fr (10)), // Main Content
                              Track (Fr (0))
                              }; // to center everything
     
-    grid.templateColumns = { 
+    parameterGrid.templateColumns = { 
                              Track (Fr (0)), // to center everything
                              Track (Fr (30)), // Main Content
                              Track (Fr (20)), // Main Content
@@ -167,18 +198,17 @@ void PluginEditor::resized()
                             }; // to center everything 
 
     for (int i = 0; i < 20; ++i)
-        grid.items.set(i, juce::GridItem(nullptr));
+        parameterGrid.items.set(i, juce::GridItem(nullptr));
 
-    grid.items.set(6, juce::GridItem(delayComponent));
-    grid.items.set(11, juce::GridItem(reverbComponent));
+    parameterGrid.items.set(6, juce::GridItem(delayComponent));
+    parameterGrid.items.set(11, juce::GridItem(reverbComponent));
     
-    grid.items.set(8, juce::GridItem(mPluginOutputLevel));
-    grid.items.set(13, juce::GridItem(mPluginOutputGain).withMargin(30));
-    grid.items.set(12, juce::GridItem(mPluginDryWetSlider).withMargin(30));
+    parameterGrid.items.set(8, juce::GridItem(mPluginOutputLevel));
+    parameterGrid.items.set(13, juce::GridItem(mPluginOutputGain).withMargin(20));
+    parameterGrid.items.set(12, juce::GridItem(mPluginDryWetSlider).withMargin(20));
 
-    auto gridArea = getBounds();
-    gridArea.removeFromTop(120);
-    grid.performLayout (gridArea);
+
+    parameterGrid.performLayout (gridArea);
 
 
 }   
