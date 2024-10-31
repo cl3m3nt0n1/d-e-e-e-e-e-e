@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<PRESET>
-    <INFORMATION  Name="Test" Author="Canyon Team" Category="LOCAL"/>
-    <PARAMETERS>
-        <DELAY Time="500" Feedback="0.5" SyncToggle="true" SyncDivider="1" />
-        <REVERB Damping="0.2" Freeze="false" RoomSize="0.6" Wet="0.4" Dry="0.8" Width="0.8" />
-        <PLUGIN DryWet="0.8" Level="0.7" Gain="1.0" />
-    </PARAMETERS>
-</PRESET>

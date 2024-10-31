@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PRESET>
+  <INFORMATION Name="Yesterday" Author="Canyon Team" Category="LOCAL"/>
+  <PARAMETERS>
+    <DELAY Time="900" Feedback="0.9090908765792847" SyncToggle="true" SyncDivider="7"/>
+    <REVERB Damping="0.5" Freeze="true" RoomSize="0.8" Wet="1.0" Dry="0.0"
+            Width="1.0"/>
+    <PLUGIN DryWet="0.8" Level="1.0" Gain="1.0"/>
+  </PARAMETERS>
+</PRESET>
