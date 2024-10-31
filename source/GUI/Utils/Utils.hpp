@@ -3,6 +3,8 @@
 #include "juce_core/juce_core.h"
 #include "juce_graphics/juce_graphics.h"
 #include <juce_gui_basics/juce_gui_basics.h>
+#include <memory>
+#include <vector>
 
 namespace Utils
 {
@@ -20,11 +22,9 @@ namespace Utils
 struct CompAndLabel : public juce::Component
 {
 public:
-    CompAndLabel(juce::String labelText) /* : shadow(juce::Colour::fromRGBA(0, 0, 0, 30), 10, {}),
-                                           shadower(shadow) */
+    CompAndLabel(juce::String labelText)
     {
-        juce::FontOptions fontOptions("JetBrainsMono NFM", "SemiBold", 18.0f);
-        label.setFont(fontOptions.withKerningFactor(0.05));
+        label.setFont(fontOptions.withKerningFactor(0.20));
         label.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
         label.setJustificationType(juce::Justification::horizontallyCentred | juce::Justification::verticallyCentred);
         label.setText(labelText, juce::NotificationType::dontSendNotification);
@@ -51,9 +51,8 @@ public:
         g.fillPath(glyphPath);
     }
 protected:
+    juce::FontOptions fontOptions {"JetBrainsMono NFM", "Bold", 18.0f};
     juce::Label label;
-/*     juce::DropShadow shadow;
-    juce::DropShadower shadower; */
 };
 
 
@@ -69,7 +68,6 @@ public:
     SliderAndLabel(juce::String labelText) : CompAndLabel(labelText), slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
                       juce::Slider::TextEntryBoxPosition::NoTextBox)
     {
-        // shadower.setOwner(dynamic_cast<Component*>(&slider));
         addAndMakeVisible(slider);
     }
 
@@ -90,14 +88,13 @@ public:
             Track(Fr(1))
         };
 
-        grid.items.set(0, slider);
-        grid.items.set(1, label);
+        grid.items.set(0, juce::GridItem(slider));
+        grid.items.set(1, juce::GridItem(label));
 
         grid.performLayout(getLocalBounds());
     }
 
     juce::Slider& getslider() { return slider; }
-    
     
 private:
     juce::Slider slider;

@@ -17,13 +17,19 @@ public:
         auto rw = radius * 2.0f;
         auto angle = rotaryStartAngle + sliderPosProportional * (rotaryEndAngle - rotaryStartAngle);
 
-        // fill
-        g.setColour (juce::Colours::black);
-        g.fillEllipse (rx, ry, rw, rw);
+        juce::DropShadow shadow (juce::Colour::fromRGBA(0, 0, 0, 64), 4, juce::Point(4, 4));
+
+        juce::Path ellipseAsPath;
+        ellipseAsPath.addEllipse (rx, ry, rw, rw);
+        shadow.drawForPath(g, ellipseAsPath);
 
         // outline
         g.setColour (juce::Colours::white);
         g.drawEllipse (rx, ry, rw, rw, 5.0f);
+
+        // fill
+        g.setColour (juce::Colours::black);
+        g.fillEllipse (rx, ry, rw, rw);
 
         // Drawing the pointer
         juce::Path p;
@@ -34,14 +40,6 @@ public:
         g.setColour (juce::Colours::white);
         g.fillPath (p);
 
-        // // Add a drop shadow effect
-        // juce::Path ellipseAsPath;
-        // ellipseAsPath.addEllipse (rx, ry, rw, rw);
-        // juce::DropShadow shadow;
-        // shadow.colour = juce::Colour (juce::uint8 (0), juce::uint8 (0), juce::uint8 (0), 0.25f);
-        // shadow.radius = radius + 2;
-        // shadow.offset = juce::Point (3, 3);
-        // shadow.drawForPath (g, ellipseAsPath);
     }
 
     void drawToggleButton (juce::Graphics& g, juce::ToggleButton& button, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override
@@ -105,8 +103,8 @@ public:
 
     void positionComboBoxText (juce::ComboBox& box, juce::Label& label) override
     {
+        label.setFont(label.getFont().withExtraKerningFactor(0.20f));
         label.setBounds(box.getLocalBounds().withSizeKeepingCentre(box.getWidth() / 4, box.getHeight() / 2));
-
         label.setJustificationType(juce::Justification::centred);
         label.setFont(fontOptions.withKerningFactor(0.05));
     }
@@ -125,7 +123,7 @@ public:
 
     void drawButtonText (juce::Graphics& g, juce::TextButton& button, bool isMouseOverButton, bool isButtonDown) override
     {
-        g.setFont (fontOptions.withKerningFactor(0.05f).withHeight(14.0f));
+        g.setFont (fontOptions.withKerningFactor(0.10f).withHeight(12.0f));
         g.setColour (button.findColour (button.getToggleState() ? juce::TextButton::textColourOnId
                                                                 : juce::TextButton::textColourOffId)
                         .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
@@ -146,6 +144,6 @@ public:
 
 
 private:
-    juce::FontOptions fontOptions {"JetBrainsMono NFM", "SemiBold", 18.0f};
+    juce::FontOptions fontOptions {"JetBrainsMono NFM", "Bold", 18.0f};
 
 };

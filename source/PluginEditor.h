@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BinaryData.h"
+#include "GUI/Utils/Utils.hpp"
 #include "PluginProcessor.h"
 #include "juce_gui_basics/juce_gui_basics.h"
 #include "melatonin_inspector/melatonin_inspector.h"
@@ -47,7 +48,7 @@ private:
                                                          mPluginOutputLevelAttachement,
                                                          mPluginOutputGainAttachement;
 
-    PresetManagerComponent mPresetManager;                                                         
+    PresetManagerComponent mPresetManager;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginEditor)
 };
